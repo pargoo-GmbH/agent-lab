@@ -1,0 +1,20 @@
+{
+  "name": "pargoo-agent-lab",
+  "interface": {
+    "displayName": "pargoo Agent Lab"
+  },
+  "plugins": [
+    {
+      "name": "pargoo-workflows",
+      "source": {
+        "source": "local",
+        "path": "./plugins/pargoo-workflows"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
