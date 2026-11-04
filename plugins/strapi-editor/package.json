@@ -1,6 +1,6 @@
 {
   "name": "strapi-editor",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "private": true,
   "type": "module",
   "description": "A local, multi-project Strapi editor plugin for Codex Desktop on macOS",
