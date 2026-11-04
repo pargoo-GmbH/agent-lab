@@ -2,9 +2,11 @@
 
 pargoo's repository for shared Codex workflows and independently reusable project skills.
 
-## pargoo Workflows Plugin
+## pargoo DevFlow Plugin
 
-Plugin ID: `pargoo-workflows` · Version: `0.1.0` · Publisher: pargoo GmbH
+Plugin ID: `pargoo-devflow` · Version: `0.1.0` · Publisher: pargoo GmbH
+
+Development for AI agents.
 
 The Plugin packages exactly seven shared skills:
 
@@ -25,7 +27,7 @@ agent-lab/
 ├── .agents/plugins/marketplace.json
 ├── .gitignore
 ├── README.md
-├── plugins/pargoo-workflows/
+├── plugins/pargoo-devflow/
 │   ├── plugin.json
 │   └── skills/
 │       ├── develop/
@@ -49,7 +51,7 @@ Use a current Codex client with Plugin support. Once this packaging is committed
 ```sh
 codex plugin marketplace add pargoo-GmbH/agent-lab --ref feat/bootstrap-agent-lab
 codex plugin list --available --marketplace pargoo-agent-lab
-codex plugin add pargoo-workflows@pargoo-agent-lab
+codex plugin add pargoo-devflow@pargoo-agent-lab
 ```
 
 The branch above is the initial bootstrap target; select the ref containing the published package if it changes. The Marketplace ID is `pargoo-agent-lab`, displayed as **pargoo Agent Lab**. These local changes are not yet published to GitHub.
@@ -60,7 +62,7 @@ Installation commands are supported by Codex CLI 0.148.0 help. Marketplace regis
 
 ## Future updates
 
-Maintain the shared skills only under `plugins/pargoo-workflows/skills/`. Future releases should update that directory and increment `plugin.json`'s version before publishing to GitHub. Users can refresh their tracked Git Marketplace with:
+Maintain the shared skills only under `plugins/pargoo-devflow/skills/`. Future releases should update that directory and increment `plugin.json`'s version before publishing to GitHub. Users can refresh their tracked Git Marketplace with:
 
 ```sh
 codex plugin marketplace upgrade pargoo-agent-lab

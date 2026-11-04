@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "pargoo-workflows",
+  "name": "pargoo-devflow",
   "version": "0.1.0",
-  "description": "Shared workflows for planning GitHub issues, reviewing implementations, and preparing pull requests.",
+  "description": "A reusable AI-assisted development plugin that guides coding agents through GitHub issue planning, implementation, validation, review, and pull-request preparation using project-specific context and tools.",
   "author": {
     "name": "pargoo GmbH",
     "url": "https://github.com/pargoo-GmbH"
@@ -11,8 +11,8 @@
   "extensions": {
     "com.openai": {
       "interface": {
-        "displayName": "pargoo Workflows",
-        "shortDescription": "Plan issues, review work, and prepare pull requests.",
+        "displayName": "pargoo DevFlow",
+        "shortDescription": "Development for AI agents",
         "developerName": "pargoo GmbH",
         "category": "Productivity"
       }
