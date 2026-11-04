@@ -18377,15 +18377,65 @@ var Contexts = class {
 
 // src/server/native.ts
 import { spawn } from "node:child_process";
+import { AsyncLocalStorage } from "node:async_hooks";
 import { fileURLToPath } from "node:url";
+var accessDeniedMessage = "Keychain access was denied or cancelled. Select Retry Keychain access in the pargoo panel before trying again. Do not retry automatically.";
 var Native = class {
   path;
-  knownSecrets;
+  accessBlocked = false;
+  secrets = new AsyncLocalStorage();
+  keychainQueue = Promise.resolve();
+  accessEpoch = 0;
   constructor(path = process.env.STRAPI_EDITOR_NATIVE_HELPER || fileURLToPath(new URL("../native/strapi-editor-helper", import.meta.url))) {
     this.path = path;
-    this.knownSecrets = /* @__PURE__ */ new Set();
+  }
+  async withRequest(task) {
+    const secrets = /* @__PURE__ */ new Set();
+    return this.secrets.run(secrets, async () => {
+      try {
+        return await task();
+      } finally {
+        secrets.clear();
+      }
+    });
+  }
+  remember(value) {
+    this.secrets.getStore()?.add(value);
+  }
+  retryAccess() {
+    this.accessBlocked = false;
+    this.accessEpoch++;
   }
   async request(request) {
+    if (request.action === "chooseFile") {
+      return this.invoke(request);
+    }
+    requireValue(!this.accessBlocked, "KEYCHAIN_ACCESS_DENIED", accessDeniedMessage);
+    const accessEpoch = this.accessEpoch;
+    const result = this.keychainQueue.then(async () => {
+      requireValue(
+        !this.accessBlocked && accessEpoch === this.accessEpoch,
+        "KEYCHAIN_ACCESS_DENIED",
+        accessDeniedMessage
+      );
+      try {
+        return await this.invoke(request);
+      } catch (error2) {
+        if (errorCode(error2) === "KEYCHAIN_ACCESS_DENIED") {
+          this.accessBlocked = true;
+        }
+        throw error2;
+      }
+    });
+    this.keychainQueue = result.then(
+      () => {
+      },
+      () => {
+      }
+    );
+    return result;
+  }
+  async invoke(request) {
     requireValue(
       process.platform === "darwin",
       "MACOS_REQUIRED",
@@ -18426,6 +18476,9 @@ var Native = class {
         if (result?.code === "CANCELLED") {
           return resolve({ cancelled: true });
         }
+        if (result?.code === "KEYCHAIN_ACCESS_DENIED") {
+          return reject(new EditorError("KEYCHAIN_ACCESS_DENIED", accessDeniedMessage));
+        }
         if (code !== 0 || !result?.ok) {
           return reject(
             new EditorError(
@@ -18442,7 +18495,7 @@ var Native = class {
     });
   }
   async set(key, value) {
-    this.knownSecrets.add(value);
+    this.remember(value);
     await this.request({ action: "set", key, value });
   }
   async get(key) {
@@ -18452,7 +18505,7 @@ var Native = class {
       "KEYCHAIN_UNAVAILABLE",
       "The saved credential is unavailable. Reconnect this profile."
     );
-    this.knownSecrets.add(result.value);
+    this.remember(result.value);
     return result.value;
   }
   async delete(key) {
@@ -18464,7 +18517,7 @@ var Native = class {
   redact(value) {
     if (typeof value === "string") {
       let redacted = value;
-      for (const secret of this.knownSecrets) {
+      for (const secret of this.secrets.getStore() ?? []) {
         if (secret) {
           redacted = redacted.split(secret).join("[redacted]");
         }
@@ -20767,7 +20820,7 @@ var StreamableHTTPClientTransport = class {
 };
 
 // src/shared/version.ts
-var VERSION = "0.2.5";
+var VERSION = "0.2.6";
 
 // src/server/strapi/mcp-client.ts
 var Upstream = class {
@@ -20895,21 +20948,22 @@ var Upstream = class {
       };
     });
   }
-  async tool(profile, name) {
-    return this.use(
-      profile,
-      async (client) => (await this.tools(client)).find((tool) => tool.name === name)
-    );
-  }
-  async call(profile, name, args = {}) {
+  async withTool(profile, name, args, task) {
     return this.use(profile, async (client) => {
+      const tool = (await this.tools(client)).find((tool2) => tool2.name === name);
       requireValue(
-        (await this.tools(client)).some((tool) => tool.name === name),
+        tool,
         "TOOL_NOT_AVAILABLE",
         "This tool is not available for the selected Strapi connection and token."
       );
-      return client.callTool({ name, arguments: args }, void 0, { timeout: 12e4 });
+      return task(
+        tool,
+        () => client.callTool({ name, arguments: args }, void 0, { timeout: 12e4 })
+      );
     });
+  }
+  async call(profile, name, args = {}) {
+    return this.withTool(profile, name, args, (_tool, invoke) => invoke());
   }
   async resource(profile, uri) {
     return this.use(profile, (client) => client.readResource({ uri }));
@@ -21005,7 +21059,8 @@ var Editor = class {
       selected,
       checks,
       pendingOperations,
-      credentialCleanupPending: await this.profiles.hasPendingCleanup()
+      credentialCleanupPending: await this.profiles.hasPendingCleanup(),
+      credentialAccessBlocked: this.credentials.accessBlocked
     };
   }
   async checkProfile(contextId, profileId) {
@@ -21057,26 +21112,23 @@ var Editor = class {
   }
   async call({ contextId, toolName, arguments: args = {}, requestId }) {
     const { profile } = await this.contexts.require(contextId);
-    const tool = await this.upstream.tool(profile, toolName);
-    requireValue(
-      tool,
-      "TOOL_NOT_AVAILABLE",
-      "The selected Strapi connection does not expose this tool."
-    );
-    const publication = publicationAction(toolName);
-    if (tool.annotations?.readOnlyHint === true && !mutatingAction(toolName, tool)) {
-      return {
-        ok: true,
-        contextId,
-        profile: publicProfile(profile),
-        result: await this.upstream.call(profile, toolName, args)
-      };
-    }
-    return this.prepare(
-      { contextId, requestId, kind: "mcp", toolName, arguments: args },
-      profile.environment === "production" && publication,
-      profile
-    );
+    return this.upstream.withTool(profile, toolName, args, async (tool, invoke) => {
+      const publication = publicationAction(toolName);
+      if (tool.annotations?.readOnlyHint === true && !mutatingAction(toolName, tool)) {
+        return {
+          ok: true,
+          contextId,
+          profile: publicProfile(profile),
+          result: await invoke()
+        };
+      }
+      return this.prepare(
+        { contextId, requestId, kind: "mcp", toolName, arguments: args },
+        profile.environment === "production" && publication,
+        profile,
+        invoke
+      );
+    });
   }
   async uploadRequest(input) {
     const { profile } = await this.contexts.require(input.contextId);
@@ -21087,7 +21139,7 @@ var Editor = class {
     );
     return this.prepare({ ...input, kind: "upload" }, false, profile);
   }
-  async prepare(input, needsApproval, expectedProfile) {
+  async prepare(input, needsApproval, expectedProfile, invoke) {
     requireValue(
       isId(input.requestId),
       "REQUEST_ID_REQUIRED",
@@ -21134,7 +21186,7 @@ var Editor = class {
       return this.status(input.contextId, operation.id);
     }
     if (!needsApproval) {
-      return this.execute(input.contextId, operation.id);
+      return this.execute(input.contextId, operation.id, invoke);
     }
     return {
       ok: true,
@@ -21180,7 +21232,7 @@ var Editor = class {
       ...operation.error ? { error: operation.error } : {}
     };
   }
-  async execute(contextId, operationId) {
+  async execute(contextId, operationId, invoke) {
     requireValue(isId(operationId), "OPERATION_NOT_FOUND", "Invalid operation identifier.");
     let profile;
     const operation = await this.store.lock(async () => {
@@ -21205,17 +21257,14 @@ var Editor = class {
         "This operation has already started. Inspect its status before attempting another change."
       );
       operation2.state = "running";
+      delete operation2.error;
       await this.store.write(`operation-${operation2.id}.json`, operation2);
       return operation2;
     });
     try {
       let result;
       if (operation.input.kind === "mcp") {
-        result = await this.upstream.call(
-          profile,
-          operation.input.toolName,
-          operation.input.arguments
-        );
+        result = await (invoke ? invoke() : this.upstream.call(profile, operation.input.toolName, operation.input.arguments));
       } else {
         const adminToken = await this.credentials.get(profile.uploadCredential);
         result = await this.upload(
@@ -21250,9 +21299,10 @@ var Editor = class {
       }
       return operation.result;
     } catch (error2) {
+      const credentialDenied = errorCode(error2) === "KEYCHAIN_ACCESS_DENIED";
       const definitiveUploadFailure = operation.input.kind === "upload" && error2 instanceof UploadError && !error2.toJSON().resultUnknown;
-      operation.state = definitiveUploadFailure ? "failed" : "result_unknown";
-      operation.error = definitiveUploadFailure ? error2.toJSON() : {
+      operation.state = credentialDenied ? "awaiting_confirmation" : definitiveUploadFailure ? "failed" : "result_unknown";
+      operation.error = credentialDenied ? publicError(error2) : definitiveUploadFailure ? error2.toJSON() : {
         code: errorCode(error2) ?? "UPSTREAM_RESULT_UNKNOWN",
         message: "The result could not be confirmed. Inspect the selected CMS before creating another operation."
       };
@@ -21261,6 +21311,13 @@ var Editor = class {
         await this.store.write(`operation-${operationId}.json`, operation);
       } catch {
         operationSaved = false;
+      }
+      if (credentialDenied) {
+        throw new EditorError("KEYCHAIN_ACCESS_DENIED", publicError(error2).message, {
+          contextId,
+          operationId,
+          operationSaved
+        });
       }
       if (definitiveUploadFailure) {
         throw error2;
@@ -21309,6 +21366,10 @@ var Editor = class {
     }
     if (action === "retry_credential_cleanup") {
       await this.profiles.cleanup();
+      return this.state(contextId);
+    }
+    if (action === "retry_credential_access") {
+      this.credentials.retryAccess();
       return this.state(contextId);
     }
     if (action === "execute_operation") {
@@ -21510,7 +21571,7 @@ function createServer(editor = createEditor(), { htmlPath = fileURLToPath2(new U
       ]
     };
   });
-  server.setRequestHandler(CallToolRequestSchema, async ({ params }) => {
+  const callTool = async ({ params }) => {
     const input = params.arguments ?? {};
     try {
       const validate2 = validators.get(params.name);
@@ -21594,7 +21655,11 @@ function createServer(editor = createEditor(), { htmlPath = fileURLToPath2(new U
         content: [{ type: "text", text: JSON.stringify(safe) }]
       };
     }
-  });
+  };
+  server.setRequestHandler(
+    CallToolRequestSchema,
+    (request) => editor.credentials.withRequest(() => callTool(request))
+  );
   return server;
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
