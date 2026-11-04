@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Strapi Editor connection panel test</title>
+    <style>
+      body {
+        margin: 0;
+        font:
+          13px -apple-system,
+          sans-serif;
+        background: #121316;
+        color: #eee;
+      }
+      .banner {
+        padding: 12px 20px;
+        background: #26232f;
+        border-bottom: 1px solid #51496b;
+      }
+      .banner span {
+        margin-right: 14px;
+      }
+      .banner button {
+        margin: 4px;
+        padding: 7px 10px;
+        color: #eee;
+        background: #383342;
+        border: 1px solid #74658b;
+        border-radius: 6px;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 360px minmax(0, 1fr);
+        gap: 20px;
+        padding: 20px;
+      }
+      .column h2 {
+        font-size: 12px;
+        color: #abb0be;
+        font-weight: 500;
+      }
+      iframe {
+        display: block;
+        width: 100%;
+        border: 0;
+      }
+      #inline-app {
+        height: 140px;
+      }
+      #preview-app {
+        height: calc(100vh - 160px);
+        min-height: 650px;
+        border-radius: 14px;
+      }
+      .stats {
+        font-size: 12px;
+        margin-top: 7px;
+      }
+      body [hidden] {
+        display: none !important;
+      }
+      @media (max-width: 820px) {
+        .layout {
+          grid-template-columns: minmax(0, 1fr);
+          padding: 0;
+          gap: 0;
+        }
+        .column:first-child {
+          display: none;
+        }
+        .column h2 {
+          padding: 0 16px;
+        }
+        #preview-app {
+          height: calc(100vh - 160px);
+          border-radius: 0;
+          min-height: 650px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="banner">
+      <strong id="host-status">Connecting…</strong>
+      <div class="stats">
+        <span>Chat messages: <b id="messages">0</b></span
+        ><span>Context updates: <b id="updates">0</b></span
+        ><span>Agent profile: <b id="agent-profile">None</b></span>
+      </div>
+      <button id="prepare">Prepare publication approval</button
+      ><button id="replay">Replay old view snapshot</button
+      ><button id="hide-preview">Close preview</button>
+    </div>
+    <div class="layout">
+      <section class="column">
+        <h2>Chat · Compact launcher only</h2>
+        <iframe
+          id="inline-app"
+          title="Chat launcher"
+          sandbox="allow-scripts allow-same-origin"
+        ></iframe>
+      </section>
+      <section id="preview-column" class="column" hidden>
+        <h2>Preview · Current connection</h2>
+        <iframe
+          id="preview-app"
+          title="Connections preview"
+          sandbox="allow-scripts allow-same-origin"
+        ></iframe>
+      </section>
+    </div>
+    <script type="module" src="/host.js"></script>
+  </body>
+</html>

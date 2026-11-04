@@ -1,0 +1,660 @@
+:root {
+  color-scheme: light dark;
+  font:
+    14px/1.5 -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  --bg: #f8f9fc;
+  --surface: #fff;
+  --text: #232c3f;
+  --muted: #69758a;
+  --line: #dce2ed;
+  --accent: #3768ec;
+  --accent-ink: #fff;
+  --soft: #edf2ff;
+  --good: #287a55;
+  --good-soft: #e3f2e9;
+  --active-surface: #f1f8f4;
+  --warning: #975d21;
+  --warning-bg: #fff3e2;
+  --danger: #b54845;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #191b22;
+    --surface: #222630;
+    --text: #edf1fb;
+    --muted: #a8b3c8;
+    --line: #3b4353;
+    --accent: #98b5ff;
+    --accent-ink: #192c57;
+    --soft: #2b3959;
+    --good: #91d4b0;
+    --good-soft: #29473a;
+    --active-surface: #23332d;
+    --warning: #ebbd7b;
+    --warning-bg: #3b3024;
+    --danger: #f19e99;
+  }
+}
+:root[data-theme='dark'] {
+  --bg: #191b22;
+  --surface: #222630;
+  --text: #edf1fb;
+  --muted: #a8b3c8;
+  --line: #3b4353;
+  --accent: #98b5ff;
+  --accent-ink: #192c57;
+  --soft: #2b3959;
+  --good: #91d4b0;
+  --good-soft: #29473a;
+  --active-surface: #23332d;
+  --warning: #ebbd7b;
+  --warning-bg: #3b3024;
+  --danger: #f19e99;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: transparent;
+  color: var(--text);
+}
+body[data-display-mode='fullscreen'] {
+  background: var(--bg);
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 12px;
+  line-height: 1.4;
+  min-height: 36px;
+}
+button:hover:not(:disabled) {
+  background: var(--soft);
+  border-color: var(--accent);
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+.primary:hover:not(:disabled) {
+  background: var(--accent);
+  filter: brightness(1.06);
+}
+.quiet {
+  background: transparent;
+}
+.danger {
+  color: var(--danger);
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+h1 {
+  font-size: 20px;
+  line-height: 1.35;
+  letter-spacing: -0.25px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+h2 {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+h3 {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+p {
+  overflow-wrap: anywhere;
+}
+.panel {
+  width: 100%;
+  max-width: 720px;
+  margin-inline: auto;
+  padding: 22px 20px 24px;
+  min-height: 100vh;
+}
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 20px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.brand-icon {
+  width: 30px;
+  height: 23px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.brand.compact {
+  font-size: 14px;
+}
+.brand.compact .brand-icon {
+  width: 24px;
+  height: 20px;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.project-heading {
+  margin-bottom: 24px;
+}
+.project-label {
+  margin-bottom: 8px;
+}
+.project-label label {
+  color: var(--muted);
+  font-weight: 500;
+  margin: 0;
+}
+.project-label button {
+  font-size: 12px;
+  padding: 4px 0;
+  min-height: 28px;
+  border-color: transparent;
+  color: var(--muted);
+}
+.project-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.project-controls h1 {
+  flex: 1;
+  font-size: 18px;
+  min-width: 0;
+}
+.project-controls select {
+  flex: 1;
+  min-height: 40px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.project-controls option {
+  font-size: 14px;
+  font-weight: 400;
+}
+.project-controls .remove-project-button {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  min-height: 36px;
+  padding: 8px;
+  color: var(--muted);
+  border-color: transparent;
+}
+.project-controls .remove-project-button:hover {
+  color: var(--danger);
+  border-color: var(--line);
+}
+.environment-heading {
+  margin-bottom: 10px;
+}
+.environment-heading button {
+  font-size: 12px;
+  color: var(--muted);
+  border-color: transparent;
+  min-height: 30px;
+  padding: 5px 0;
+}
+.environment-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--surface);
+  overflow: clip;
+}
+.environment-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.environment-row:last-child {
+  border-bottom: 0;
+}
+.environment-row.is-active {
+  background: var(--active-surface);
+}
+.environment-info {
+  min-width: 0;
+}
+.environment-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.type-badge {
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--bg);
+  padding: 3px 6px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+.type-badge.production {
+  color: var(--warning);
+  background: var(--warning-bg);
+}
+.url {
+  margin-top: 7px;
+  font-size: 12px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.environment-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.environment-actions > button {
+  font-size: 12px;
+  padding: 7px 10px;
+  min-height: 32px;
+}
+.environment-actions .settings-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  color: var(--muted);
+  border-color: transparent;
+}
+.environment-actions .settings-button:hover {
+  background: var(--bg);
+  color: var(--text);
+  border-color: var(--line);
+}
+.active-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--good);
+  background: var(--good-soft);
+  padding: 5px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.connection-issue {
+  color: var(--danger);
+  font-size: 11px;
+  margin-top: 6px;
+}
+.selection-hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.empty-environments {
+  padding: 23px 18px;
+  background: var(--surface);
+  border: 1px dashed var(--line);
+  border-radius: 11px;
+}
+.empty-environments p {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 7px;
+}
+.empty-environments button {
+  margin-top: 16px;
+  font-size: 12px;
+}
+.page-heading {
+  margin: 16px 0 22px;
+}
+.page-heading h1 {
+  font-size: 20px;
+}
+.page-heading button {
+  font-size: 12px;
+}
+.page-heading p {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 5px;
+}
+.back-button {
+  font-size: 12px;
+  color: var(--muted);
+  border-color: transparent;
+  padding: 5px 0;
+  min-height: 30px;
+}
+.hint {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 7px;
+}
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  margin: 16px 0 7px;
+}
+input,
+select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 11px 12px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 13px;
+}
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238994a6' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 40px;
+}
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.actions button {
+  font-size: 12px;
+}
+.project-form .actions .primary,
+.environment-form .actions .primary {
+  flex: 1;
+}
+.advanced {
+  margin-top: 20px;
+}
+.advanced summary {
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--muted);
+}
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.checkbox input {
+  width: auto;
+}
+.connection-check {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.connection-check button {
+  font-size: 12px;
+}
+.check-status {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 9px;
+}
+.check-status.connected {
+  color: var(--good);
+}
+.check-status.needs_attention {
+  color: var(--danger);
+}
+.notice {
+  font-size: 12px;
+  background: var(--soft);
+  padding: 12px 14px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+.notice button {
+  font-size: 12px;
+  margin-top: 10px;
+}
+.notice.error {
+  color: var(--danger);
+}
+.launcher {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-width: 370px;
+  padding: 11px 13px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.launcher button {
+  font-size: 12px;
+  padding: 8px 11px;
+}
+.launcher p {
+  flex-basis: 100%;
+  font-size: 12px;
+  color: var(--danger);
+}
+footer {
+  padding-top: 15px;
+  margin-top: 25px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+  color: var(--muted);
+}
+footer p + p {
+  margin-top: 7px;
+}
+.active-context {
+  font-size: 12px;
+}
+.footer-dot {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.footer-dot.active {
+  background: var(--good);
+}
+.empty {
+  padding: 24px 18px;
+}
+.empty p {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 9px;
+}
+.empty button {
+  margin-top: 20px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 20px;
+}
+.pending-list .approval {
+  margin-top: 22px;
+  border-color: var(--accent);
+}
+.eyebrow {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  margin-bottom: 8px;
+}
+.approval h2 {
+  margin-bottom: 9px;
+}
+.approval p {
+  font-size: 12px;
+}
+.approval details {
+  margin-top: 18px;
+}
+.approval summary {
+  font-size: 12px;
+  cursor: pointer;
+}
+.approval dl {
+  margin: 10px 0;
+}
+.approval dt {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 9px;
+}
+.approval dd {
+  font-size: 12px;
+  margin: 3px 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.approval dd dl {
+  border-left: 2px solid var(--line);
+  padding-left: 12px;
+}
+.approval ul {
+  padding-left: 20px;
+}
+.approval .hint {
+  margin-top: 16px;
+}
+dialog {
+  width: calc(100% - 32px);
+  max-width: 400px;
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  margin: auto;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text);
+}
+dialog::backdrop {
+  background: #0008;
+}
+dialog p {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 10px;
+}
+@media (max-width: 420px) {
+  .panel {
+    padding: 20px 16px;
+  }
+  .panel-header {
+    padding-bottom: 19px;
+    margin-bottom: 22px;
+  }
+  .brand {
+    font-size: 16px;
+  }
+  .brand-icon {
+    width: 26px;
+    height: 22px;
+  }
+  .environment-row {
+    grid-template-columns: 1fr;
+    gap: 11px;
+    padding: 15px;
+  }
+  .environment-actions {
+    justify-content: space-between;
+  }
+  .environment-title {
+    justify-content: space-between;
+  }
+  .project-heading .row {
+    gap: 9px;
+  }
+  .page-heading .row {
+    align-items: flex-start;
+  }
+}
+@media (pointer: coarse) {
+  button,
+  .environment-actions > button,
+  .project-controls .remove-project-button {
+    min-height: 44px;
+  }
+  .project-controls .remove-project-button {
+    width: 44px;
+  }
+  input,
+  select {
+    font-size: 16px;
+  }
+}

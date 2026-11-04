@@ -12,6 +12,13 @@ Desktop.ini
 # Dependencies and local caches
 node_modules/
 .cache/
+.build-*/
+.tmp/
+
+# Plugin build output
+dist/
+coverage/
+*.tsbuildinfo
 
 # Logs
 *.log

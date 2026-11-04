@@ -1,8 +1,20 @@
-# agent-lab
+# pargoo agent-lab
 
 Plugins and standalone skills for AI coding agents, maintained by **pargoo**.
 
-## pargoo DevFlow
+## Plugins
+
+### pargoo Strapi (Apple Silicon)
+
+Manage Strapi content through your agent, with a panel for projects, environments and publication approvals. Requires macOS 13+ on Apple Silicon.
+
+**Installation prompt**
+
+> Install pargoo Strapi from https://github.com/pargoo-GmbH/agent-lab. Follow the plugin's README to connect the marketplace, install the Apple Silicon package and verify that it starts.
+
+[Plugin documentation](plugins/strapi-editor/README.md)
+
+### pargoo DevFlow
 
 A plugin for AI-assisted software development, from GitHub Issue to Pull Request.
 
@@ -16,7 +28,7 @@ A plugin for AI-assisted software development, from GitHub Issue to Pull Request
 - `review-implementation`
 - `creating-pull-requests`
 
-### Install Plugin (Codex)
+#### Install Plugin (Codex)
 
 ```bash
 codex plugin marketplace add pargoo-GmbH/agent-lab
