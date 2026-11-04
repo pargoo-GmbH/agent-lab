@@ -34,6 +34,7 @@ export type EditorState = {
   checks: Record<string, { status: string; checkedAt: string; message?: string }>;
   pendingOperations: PendingOperation[];
   credentialCleanupPending: boolean;
+  credentialAccessBlocked: boolean;
 };
 export type ProfileInput = Omit<Profile, 'id' | 'revision' | 'uploadTokenConfigured'> & {
   id?: string;

@@ -1,4 +1,4 @@
-import type { Tool } from '@modelcontextprotocol/sdk/types.js';
+import type { CallToolRequest, Tool } from '@modelcontextprotocol/sdk/types.js';
 import type {
   Credentials,
   Fields,
@@ -248,7 +248,7 @@ export function createServer(
       ],
     };
   });
-  server.setRequestHandler(CallToolRequestSchema, async ({ params }) => {
+  const callTool = async ({ params }: CallToolRequest) => {
     const input = (params.arguments ?? {}) as Fields & {
       contextId: string;
       operationId: string;
@@ -351,7 +351,10 @@ export function createServer(
         content: [{ type: 'text', text: JSON.stringify(safe) }],
       };
     }
-  });
+  };
+  server.setRequestHandler(CallToolRequestSchema, (request) =>
+    editor.credentials.withRequest(() => callTool(request)),
+  );
 
   return server;
 }

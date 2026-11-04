@@ -2,7 +2,7 @@ import type { Tool } from '@modelcontextprotocol/sdk/types.js';
 import type { Store } from './state/store.ts';
 import type { Profiles } from './state/profiles.ts';
 import type { Contexts } from './state/contexts.ts';
-import type { Upstream } from './strapi/mcp-client.ts';
+import type { ToolCall, Upstream } from './strapi/mcp-client.ts';
 import type {
   CallInput,
   Credentials,
@@ -125,6 +125,7 @@ export class Editor {
       checks,
       pendingOperations,
       credentialCleanupPending: await this.profiles.hasPendingCleanup(),
+      credentialAccessBlocked: this.credentials.accessBlocked,
     };
   }
 
@@ -187,28 +188,26 @@ export class Editor {
 
   async call({ contextId, toolName, arguments: args = {}, requestId }: CallInput): Promise<Fields> {
     const { profile } = await this.contexts.require(contextId);
-    const tool = await this.upstream.tool(profile, toolName);
-    requireValue(
-      tool,
-      'TOOL_NOT_AVAILABLE',
-      'The selected Strapi connection does not expose this tool.',
-    );
-    const publication = publicationAction(toolName);
 
-    if (tool.annotations?.readOnlyHint === true && !mutatingAction(toolName, tool)) {
-      return {
-        ok: true,
-        contextId,
-        profile: publicProfile(profile),
-        result: await this.upstream.call(profile, toolName, args),
-      };
-    }
+    return this.upstream.withTool(profile, toolName, args, async (tool, invoke) => {
+      const publication = publicationAction(toolName);
 
-    return this.prepare(
-      { contextId, requestId, kind: 'mcp', toolName, arguments: args },
-      profile.environment === 'production' && publication,
-      profile,
-    );
+      if (tool.annotations?.readOnlyHint === true && !mutatingAction(toolName, tool)) {
+        return {
+          ok: true,
+          contextId,
+          profile: publicProfile(profile),
+          result: await invoke(),
+        };
+      }
+
+      return this.prepare(
+        { contextId, requestId, kind: 'mcp', toolName, arguments: args },
+        profile.environment === 'production' && publication,
+        profile,
+        invoke,
+      );
+    });
   }
 
   async uploadRequest(input: UploadInput & { contextId: string }): Promise<Fields> {
@@ -226,6 +225,7 @@ export class Editor {
     input: OperationInput,
     needsApproval: boolean,
     expectedProfile: StoredProfile,
+    invoke?: ToolCall,
   ): Promise<Fields> {
     requireValue(
       isId(input.requestId),
@@ -281,7 +281,7 @@ export class Editor {
     }
 
     if (!needsApproval) {
-      return this.execute(input.contextId, operation.id);
+      return this.execute(input.contextId, operation.id, invoke);
     }
 
     return {
@@ -332,7 +332,7 @@ export class Editor {
     };
   }
 
-  async execute(contextId: string, operationId: string): Promise<Fields> {
+  async execute(contextId: string, operationId: string, invoke?: ToolCall): Promise<Fields> {
     requireValue(isId(operationId), 'OPERATION_NOT_FOUND', 'Invalid operation identifier.');
     let profile!: StoredProfile;
     const operation = await this.store.lock(async () => {
@@ -357,6 +357,7 @@ export class Editor {
         'This operation has already started. Inspect its status before attempting another change.',
       );
       operation.state = 'running';
+      delete operation.error;
       await this.store.write(`operation-${operation.id}.json`, operation);
 
       return operation;
@@ -365,11 +366,9 @@ export class Editor {
       let result;
 
       if (operation.input.kind === 'mcp') {
-        result = await this.upstream.call(
-          profile,
-          operation.input.toolName!,
-          operation.input.arguments,
-        );
+        result = await (invoke
+          ? invoke()
+          : this.upstream.call(profile, operation.input.toolName!, operation.input.arguments));
       } else {
         const adminToken = await this.credentials.get(profile.uploadCredential);
         result = await this.upload(
@@ -407,24 +406,39 @@ export class Editor {
 
       return operation.result!;
     } catch (error) {
+      const credentialDenied = errorCode(error) === 'KEYCHAIN_ACCESS_DENIED';
       // A failed transport can occur after the server committed a change. Never replay a write automatically.
       const definitiveUploadFailure =
         operation.input.kind === 'upload' &&
         error instanceof UploadError &&
         !error.toJSON().resultUnknown;
-      operation.state = definitiveUploadFailure ? 'failed' : 'result_unknown';
-      operation.error = definitiveUploadFailure
-        ? error.toJSON()
-        : {
-            code: errorCode(error) ?? 'UPSTREAM_RESULT_UNKNOWN',
-            message:
-              'The result could not be confirmed. Inspect the selected CMS before creating another operation.',
-          };
+      operation.state = credentialDenied
+        ? 'awaiting_confirmation'
+        : definitiveUploadFailure
+          ? 'failed'
+          : 'result_unknown';
+      operation.error = credentialDenied
+        ? publicError(error)
+        : definitiveUploadFailure
+          ? error.toJSON()
+          : {
+              code: errorCode(error) ?? 'UPSTREAM_RESULT_UNKNOWN',
+              message:
+                'The result could not be confirmed. Inspect the selected CMS before creating another operation.',
+            };
       let operationSaved = true;
       try {
         await this.store.write(`operation-${operationId}.json`, operation);
       } catch {
         operationSaved = false;
+      }
+
+      if (credentialDenied) {
+        throw new EditorError('KEYCHAIN_ACCESS_DENIED', publicError(error).message, {
+          contextId,
+          operationId,
+          operationSaved,
+        });
       }
 
       if (definitiveUploadFailure) {
@@ -488,6 +502,12 @@ export class Editor {
 
     if (action === 'retry_credential_cleanup') {
       await this.profiles.cleanup();
+
+      return this.state(contextId);
+    }
+
+    if (action === 'retry_credential_access') {
+      this.credentials.retryAccess();
 
       return this.state(contextId);
     }

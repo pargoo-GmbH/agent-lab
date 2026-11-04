@@ -186,6 +186,10 @@ export async function removeProfile(profile: Profile) {
 export async function retryCredentialCleanup() {
   update({ state: await ui<EditorState>('retry_credential_cleanup') });
 }
+export async function retryCredentialAccess() {
+  update({ state: await ui<EditorState>('retry_credential_access') });
+  notify('Keychain access can be requested again. Retry your connection check or action.');
+}
 export async function approveOperation(operationId: string) {
   const result = await ui<{
     ok: boolean;

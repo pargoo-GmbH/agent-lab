@@ -4,6 +4,7 @@ import {
   notify,
   openPreview,
   retryCredentialCleanup,
+  retryCredentialAccess,
   run,
   selectProfile,
   subscribe,
@@ -85,6 +86,14 @@ export const PargooPanel: React.FC = () => {
           </p>
           <button disabled={disabled} onClick={() => void run(retryCredentialCleanup)}>
             Retry cleanup
+          </button>
+        </div>
+      )}
+      {state?.credentialAccessBlocked && (
+        <div className="notice" role="status">
+          <p>Keychain access was denied or cancelled. Allow another attempt when you are ready.</p>
+          <button disabled={disabled} onClick={() => void run(retryCredentialAccess)}>
+            Retry Keychain access
           </button>
         </div>
       )}

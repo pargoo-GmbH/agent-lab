@@ -8,21 +8,79 @@ type NativeResult = {
   cancelled?: boolean;
 };
 import { spawn } from 'node:child_process';
+import { AsyncLocalStorage } from 'node:async_hooks';
 import { fileURLToPath } from 'node:url';
-import { EditorError, requireValue } from './errors.ts';
+import { EditorError, errorCode, requireValue } from './errors.ts';
+
+const accessDeniedMessage =
+  'Keychain access was denied or cancelled. Select Retry Keychain access in the pargoo panel before trying again. Do not retry automatically.';
 
 export class Native {
   path: string;
-  knownSecrets: Set<string>;
+  accessBlocked = false;
+  private secrets = new AsyncLocalStorage<Set<string>>();
+  private keychainQueue: Promise<void> = Promise.resolve();
+  private accessEpoch = 0;
   constructor(
     path = process.env.STRAPI_EDITOR_NATIVE_HELPER ||
       fileURLToPath(new URL('../native/strapi-editor-helper', import.meta.url)),
   ) {
     this.path = path;
-    this.knownSecrets = new Set<string>();
+  }
+
+  async withRequest<T>(task: () => Promise<T>): Promise<T> {
+    const secrets = new Set<string>();
+
+    return this.secrets.run(secrets, async () => {
+      try {
+        return await task();
+      } finally {
+        secrets.clear();
+      }
+    });
+  }
+
+  protected remember(value: string) {
+    this.secrets.getStore()?.add(value);
+  }
+
+  retryAccess() {
+    this.accessBlocked = false;
+    this.accessEpoch++;
   }
 
   async request(request: Fields): Promise<NativeResult> {
+    if (request.action === 'chooseFile') {
+      return this.invoke(request);
+    }
+
+    requireValue(!this.accessBlocked, 'KEYCHAIN_ACCESS_DENIED', accessDeniedMessage);
+    const accessEpoch = this.accessEpoch;
+    const result = this.keychainQueue.then(async () => {
+      requireValue(
+        !this.accessBlocked && accessEpoch === this.accessEpoch,
+        'KEYCHAIN_ACCESS_DENIED',
+        accessDeniedMessage,
+      );
+      try {
+        return await this.invoke(request);
+      } catch (error) {
+        if (errorCode(error) === 'KEYCHAIN_ACCESS_DENIED') {
+          this.accessBlocked = true;
+        }
+
+        throw error;
+      }
+    });
+    this.keychainQueue = result.then(
+      () => {},
+      () => {},
+    );
+
+    return result;
+  }
+
+  private async invoke(request: Fields): Promise<NativeResult> {
     requireValue(
       process.platform === 'darwin',
       'MACOS_REQUIRED',
@@ -66,6 +124,10 @@ export class Native {
           return resolve({ cancelled: true });
         }
 
+        if (result?.code === 'KEYCHAIN_ACCESS_DENIED') {
+          return reject(new EditorError('KEYCHAIN_ACCESS_DENIED', accessDeniedMessage));
+        }
+
         if (code !== 0 || !result?.ok) {
           return reject(
             new EditorError(
@@ -83,7 +145,7 @@ export class Native {
   }
 
   async set(key: string, value: string) {
-    this.knownSecrets.add(value);
+    this.remember(value);
     await this.request({ action: 'set', key, value });
   }
 
@@ -94,7 +156,7 @@ export class Native {
       'KEYCHAIN_UNAVAILABLE',
       'The saved credential is unavailable. Reconnect this profile.',
     );
-    this.knownSecrets.add(result.value);
+    this.remember(result.value);
 
     return result.value;
   }
@@ -111,7 +173,7 @@ export class Native {
     if (typeof value === 'string') {
       let redacted: string = value;
 
-      for (const secret of this.knownSecrets) {
+      for (const secret of this.secrets.getStore() ?? []) {
         if (secret) {
           redacted = redacted.split(secret).join('[redacted]');
         }

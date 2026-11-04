@@ -3,8 +3,15 @@ import Security
 import AppKit
 import UniformTypeIdentifiers
 
-enum HelperFailure: Error { case invalid, keychain, cancelled }
+enum HelperFailure: Error { case invalid, keychain, accessDenied, cancelled }
 let service = "com.pargoo.strapi-editor"
+
+func checkKeychainStatus(_ status: OSStatus) throws {
+    if status == errSecUserCanceled || status == errSecAuthFailed {
+        throw HelperFailure.accessDenied
+    }
+    guard status == errSecSuccess else { throw HelperFailure.keychain }
+}
 
 func emit(_ value: [String: Any]) {
     if let data = try? JSONSerialization.data(withJSONObject: value), let text = String(data: data, encoding: .utf8) {
@@ -45,28 +52,33 @@ do {
                 var item = query
                 item[kSecValueData as String] = Data(value.utf8)
                 item[kSecAttrLabel as String] = "pargoo connection"
-                guard SecItemAdd(item as CFDictionary, nil) == errSecSuccess else { throw HelperFailure.keychain }
-            } else if status != errSecSuccess { throw HelperFailure.keychain }
+                try checkKeychainStatus(SecItemAdd(item as CFDictionary, nil))
+            } else {
+                try checkKeychainStatus(status)
+            }
             emit(["ok": true])
         case "get":
             var item = query
             item[kSecReturnData as String] = true
             item[kSecMatchLimit as String] = kSecMatchLimitOne
             var result: CFTypeRef?
-            guard SecItemCopyMatching(item as CFDictionary, &result) == errSecSuccess,
-                  let resultData = result as? Data,
+            try checkKeychainStatus(SecItemCopyMatching(item as CFDictionary, &result))
+            guard let resultData = result as? Data,
                   let value = String(data: resultData, encoding: .utf8) else { throw HelperFailure.keychain }
             // Private IPC response, consumed inside the plugin runtime; never a model-facing tool result.
             emit(["ok": true, "value": value])
         case "delete":
             let status = SecItemDelete(query as CFDictionary)
-            guard status == errSecSuccess || status == errSecItemNotFound else { throw HelperFailure.keychain }
+            if status != errSecItemNotFound { try checkKeychainStatus(status) }
             emit(["ok": true])
         default: throw HelperFailure.invalid
         }
     }
 } catch HelperFailure.cancelled {
     emit(["ok": false, "code": "CANCELLED"])
+} catch HelperFailure.accessDenied {
+    emit(["ok": false, "code": "KEYCHAIN_ACCESS_DENIED"])
+    exit(1)
 } catch {
     emit(["ok": false, "code": "NATIVE_HELPER_ERROR"])
     exit(1)

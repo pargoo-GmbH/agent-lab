@@ -8,6 +8,70 @@ import { harness } from './fixtures.ts';
 import { resolve } from 'node:path';
 import { access } from 'node:fs/promises';
 import { readRegistration } from '../../scripts/check.ts';
+import { EditorError } from './errors.ts';
+
+test('concurrent MCP responses redact their own tokens and release them after success or failure', async (t) => {
+  const { editor, credentials } = await harness(t);
+  const profile = await editor.profiles.save(
+    { project: 'A', name: 'Dev', environment: 'dev', cmsUrl: 'https://cms.example.com' },
+    { mcp: 'fixture-private-token' },
+  );
+  const context = await editor.contexts.open();
+  await editor.contexts.select(context.id, profile.id, profile.revision);
+  const stored = await editor.profiles.get(profile.id);
+  const key = stored.mcpCredential;
+  const token = credentials.values.get(key);
+  const firstStarted = Promise.withResolvers();
+  const secondStarted = Promise.withResolvers();
+  const releaseSecond = Promise.withResolvers();
+  let count = 0;
+  editor.upstream.discover = async () => {
+    const value = await credentials.get(key);
+    const call = ++count;
+
+    if (call === 1) {
+      firstStarted.resolve();
+      await secondStarted.promise;
+    } else if (call === 2) {
+      secondStarted.resolve();
+      await releaseSecond.promise;
+    } else {
+      throw new EditorError('FIXTURE_ERROR', `Failed with token ${value}`);
+    }
+
+    return { instructions: value };
+  };
+  const server = createServer(editor);
+  const client = new Client({ name: 'redaction-test', version: '1.0.0' });
+  const [a, b] = InMemoryTransport.createLinkedPair();
+  await server.connect(a);
+  await client.connect(b);
+  t.after(async () => {
+    releaseSecond.resolve();
+    await client.close();
+    await server.close();
+  });
+  const discover = () =>
+    client.callTool({
+      name: 'strapi_discover',
+      arguments: { contextId: context.id },
+    });
+  const first = discover();
+  await firstStarted.promise;
+  const second = discover();
+  const result = await first;
+  assert(!JSON.stringify(result).includes(token));
+  assert.equal(result.structuredContent.catalogue.instructions, '[redacted]');
+  assert.equal(credentials.redact(token), token);
+  releaseSecond.resolve();
+  assert(!JSON.stringify(await second).includes(token));
+  const failure = await discover();
+  assert.equal(failure.structuredContent.code, 'FIXTURE_ERROR');
+  assert.equal(failure.structuredContent.message, 'Failed with token [redacted]');
+  assert(!JSON.stringify(failure).includes(token));
+  assert.equal(credentials.redact(token), token);
+  assert.equal(count, 3);
+});
 
 test('MCP protocol keeps interface capability outside model content and rejects forged confirmation', async (t) => {
   const { editor } = await harness(t);

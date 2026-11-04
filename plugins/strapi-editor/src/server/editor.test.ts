@@ -14,7 +14,8 @@ const png = Buffer.from(
 test('two real HTTP MCP projects expose different schemas and route content and images to their own CMS', async (t) => {
   const a = await fixture(t, { stateful: true }),
     b = await fixture(t, { project: 'Bravo', token: 'fixture-admin-bravo' });
-  const { editor, directory } = await harness(t);
+  const { editor, directory, credentials } = await harness(t);
+  const reads = t.mock.method(credentials, 'get');
   const pa = await editor.profiles.save(
     { project: 'Alpha', name: 'Alpha Dev', environment: 'dev', cmsUrl: a.url },
     { mcp: a.token },
@@ -28,6 +29,7 @@ test('two real HTTP MCP projects expose different schemas and route content and 
   await editor.contexts.select(ca.id, pa.id, pa.revision);
   await editor.contexts.select(cb.id, pb.id, pb.revision);
   const catalogue = await editor.discover(ca.id);
+  assert.equal(reads.mock.callCount(), 1);
   assert.equal(catalogue.catalogue.server.name, 'Alpha');
   assert(catalogue.catalogue.tools.some((x) => x.name === 'update_alpha'));
   assert.equal(catalogue.catalogue.prompts[0].name, 'editorial');
@@ -35,6 +37,8 @@ test('two real HTTP MCP projects expose different schemas and route content and 
     schemaB = await editor.call({ contextId: cb.id, toolName: 'get_editor_schema' });
   assert.deepEqual(schemaA.result.structuredContent.fields, ['title', 'html']);
   assert.deepEqual(schemaB.result.structuredContent.fields, ['headline', 'blocks']);
+  assert.equal(reads.mock.callCount(), 3);
+  assert.equal(a.sessions.created, 2);
   const id = randomUUID();
   const input = {
     contextId: ca.id,
@@ -43,6 +47,8 @@ test('two real HTTP MCP projects expose different schemas and route content and 
     requestId: id,
   };
   const updated = await editor.call(input);
+  assert.equal(reads.mock.callCount(), 4);
+  assert.equal(a.sessions.created, 3);
   assert.equal(updated.result.structuredContent.project, 'Alpha');
   const again = await editor.call(input);
   assert.equal(again.reusedOperation, true);

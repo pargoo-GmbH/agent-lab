@@ -5,6 +5,8 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 import { EditorError, requireValue } from '../errors.ts';
 import { VERSION } from '../../shared/version.ts';
 
+export type ToolCall = () => ReturnType<Client['callTool']>;
+
 export class Upstream {
   credentials: Credentials;
   fetchImpl: typeof globalThis.fetch;
@@ -162,22 +164,28 @@ export class Upstream {
     });
   }
 
-  async tool(profile: StoredProfile, name: string) {
-    return this.use(profile, async (client) =>
-      (await this.tools(client)).find((tool) => tool.name === name),
-    );
-  }
-
-  async call(profile: StoredProfile, name: string, args: Record<string, unknown> = {}) {
+  async withTool<T>(
+    profile: StoredProfile,
+    name: string,
+    args: Record<string, unknown>,
+    task: (tool: Tool, invoke: ToolCall) => Promise<T>,
+  ): Promise<T> {
     return this.use(profile, async (client) => {
+      const tool = (await this.tools(client)).find((tool) => tool.name === name);
       requireValue(
-        (await this.tools(client)).some((tool) => tool.name === name),
+        tool,
         'TOOL_NOT_AVAILABLE',
         'This tool is not available for the selected Strapi connection and token.',
       );
 
-      return client.callTool({ name, arguments: args }, undefined, { timeout: 120_000 });
+      return task(tool, () =>
+        client.callTool({ name, arguments: args }, undefined, { timeout: 120_000 }),
+      );
     });
+  }
+
+  async call(profile: StoredProfile, name: string, args: Record<string, unknown> = {}) {
+    return this.withTool(profile, name, args, (_tool, invoke) => invoke());
   }
 
   async resource(profile: StoredProfile, uri: string) {

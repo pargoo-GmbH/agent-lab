@@ -28,6 +28,10 @@ Create a project, add an environment, enter its Strapi base URL and Admin token 
 
 Settings live in `~/Library/Application Support/Strapi Editor`; tokens live in macOS Keychain under `com.pargoo.strapi-editor`. Package updates preserve both. The agent workflows are documented in `skills/`.
 
+macOS **Allow** grants one Keychain access; **Always Allow** remembers permission for that helper and credential. Tool inspection and immediate execution share one MCP connection and one credential read. Tokens are not cached between requests; values needed to redact responses are retained only within the current request. JavaScript does not guarantee immediate erasure from memory.
+
+After a Keychain denial or cancellation, further credential requests pause until you select **Retry Keychain access** in the panel. That button only permits another attempt: it does not rerun a write. Retry the connection check or requested action afterwards, keeping the same request ID for a write. A write blocked before reaching Strapi remains pending rather than being reported as an unknown remote result.
+
 ## Source layout
 
 ```text

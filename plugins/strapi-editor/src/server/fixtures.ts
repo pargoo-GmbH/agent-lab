@@ -1,5 +1,6 @@
-import type { Fields } from './types.ts';
+import type { Fields, StoredProfile } from './types.ts';
 import type { Tool } from '@modelcontextprotocol/sdk/types.js';
+import { Upstream } from './strapi/mcp-client.ts';
 type Hooks = { after(callback: () => void | Promise<void>): unknown };
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
@@ -9,6 +10,12 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Native } from './native.ts';
 import { createEditor } from './index.ts';
+import { requireValue } from './errors.ts';
+
+type StubUpstream = {
+  tool(profile: StoredProfile, name: string): Promise<Tool | undefined>;
+  call: Upstream['call'];
+};
 
 export class MemoryCredentials extends Native {
   values: Map<string, string>;
@@ -19,7 +26,7 @@ export class MemoryCredentials extends Native {
 
   async set(key: string, value: string) {
     this.values.set(key, value);
-    this.knownSecrets.add(value);
+    this.remember(value);
   }
 
   async get(key: string) {
@@ -27,7 +34,10 @@ export class MemoryCredentials extends Native {
       throw new Error('Missing test credential');
     }
 
-    return this.values.get(key)!;
+    const value = this.values.get(key)!;
+    this.remember(value);
+
+    return value;
   }
 
   async delete(key: string) {
@@ -35,15 +45,36 @@ export class MemoryCredentials extends Native {
   }
 }
 
-export async function harness(t: Hooks, options: Parameters<typeof createEditor>[0] = {}) {
+export async function harness(
+  t: Hooks,
+  options: Omit<NonNullable<Parameters<typeof createEditor>[0]>, 'upstream'> & {
+    upstream?: Upstream | StubUpstream;
+  } = {},
+) {
   const directory = await mkdtemp(join(tmpdir(), 'strapi-editor-test-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
   const credentials = new MemoryCredentials();
+  const upstream = options.upstream;
+  let adapted: Upstream | undefined;
+
+  if (upstream && !('withTool' in upstream)) {
+    const withTool: Upstream['withTool'] = async (profile, name, args, task) => {
+      const tool = await upstream.tool(profile, name);
+      requireValue(tool, 'TOOL_NOT_AVAILABLE', 'The test tool is unavailable.');
+
+      return task(tool, () => upstream.call(profile, name, args));
+    };
+    adapted = Object.assign(new Upstream(credentials), upstream, { withTool });
+  } else {
+    adapted = upstream;
+  }
+
   const editor = createEditor({
     directory,
     credentials,
     native: { chooseFile: async () => ({ cancelled: true }) },
     ...options,
+    upstream: adapted,
   });
 
   return { editor, directory, credentials };

@@ -2,6 +2,9 @@ import type { Profile, ProfileInput } from '../shared/types.ts';
 
 export type Fields = Record<string, unknown>;
 export type Credentials = {
+  accessBlocked: boolean;
+  retryAccess(): void;
+  withRequest<T>(task: () => Promise<T>): Promise<T>;
   set(key: string, value: string): Promise<void>;
   get(key: string): Promise<string>;
   delete(key: string): Promise<void>;
@@ -83,7 +86,7 @@ export type UiRequest = { contextId: string; uiNonce?: string } & (
   | { action: 'save_profile'; profile: ProfileSettings; tokens?: Tokens; projectId?: string }
   | { action: 'remove_profile' | 'select_profile'; profileId: string; revision: string }
   | { action: 'check_profile'; profileId: string }
-  | { action: 'retry_credential_cleanup' | 'state' }
+  | { action: 'retry_credential_cleanup' | 'retry_credential_access' | 'state' }
   | { action: 'execute_operation'; operationId: string }
 );
 export type RpcResponse = {
