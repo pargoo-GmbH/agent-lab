@@ -1,0 +1,4 @@
+interface:
+  display_name: "Split Issue Into Subissues"
+  short_description: "Plan and create independent child issues"
+  default_prompt: "Use $split-issue-into-subissues to decompose this issue, show the plan for approval, then create and link the approved subissues."

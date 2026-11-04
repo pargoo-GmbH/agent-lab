@@ -1,0 +1,21 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "pargoo-devflow",
+  "version": "0.1.0",
+  "description": "A reusable AI-assisted development plugin that guides coding agents through GitHub issue planning, implementation, validation, review, and pull-request preparation using project-specific context and tools.",
+  "author": {
+    "name": "pargoo GmbH",
+    "url": "https://github.com/pargoo-GmbH"
+  },
+  "repository": "https://github.com/pargoo-GmbH/agent-lab",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "pargoo DevFlow",
+        "shortDescription": "Development for AI agents",
+        "developerName": "pargoo GmbH",
+        "category": "Developer Tools"
+      }
+    }
+  }
+}

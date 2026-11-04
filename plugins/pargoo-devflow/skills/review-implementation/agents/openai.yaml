@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Implementation"
+  short_description: "Discover checks and review code changes"
+  default_prompt: "Use $review-implementation to discover and run the project checks, then review the current implementation."

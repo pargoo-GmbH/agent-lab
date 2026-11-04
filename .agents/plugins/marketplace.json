@@ -1,0 +1,20 @@
+{
+  "name": "pargoo-agent-lab",
+  "interface": {
+    "displayName": "pargoo Agent Lab"
+  },
+  "plugins": [
+    {
+      "name": "pargoo-devflow",
+      "source": {
+        "source": "local",
+        "path": "./plugins/pargoo-devflow"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}
