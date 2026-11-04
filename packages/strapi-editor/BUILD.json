@@ -1,0 +1,14 @@
+{
+  "version": "0.2.5",
+  "node": "v22.21.1",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "minimumMacOS": "13.0",
+  "builtAt": "2026-11-04T20:13:53.872Z",
+  "runtime": {
+    "symbolsStripped": true,
+    "bytes": 89249056,
+    "sha256": "cd88f2f0bcf8efc9f21eb29b01b9846679f2974b8edc8a30062fd6e013580df9"
+  },
+  "signing": "Ad-hoc; Developer ID and notarization are not configured."
+}
