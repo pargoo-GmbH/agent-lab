@@ -1,0 +1,4 @@
+interface:
+  display_name: "Refine Issue Plan"
+  short_description: "Decide issue scope and draft an executable plan"
+  default_prompt: "Use $refine-issue-plan to decide whether this issue should be split and, if not, draft a clear implementation brief."

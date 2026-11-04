@@ -1,0 +1,4 @@
+interface:
+  display_name: "Report Implementation"
+  short_description: "Report completed work on GitHub issues"
+  default_prompt: "Use $report-implementation to verify and report the completed work on the relevant GitHub issue."
