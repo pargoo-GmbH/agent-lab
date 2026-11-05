@@ -1,9 +1,14 @@
 ---
 name: develop
 description: Coordinate a GitHub issue from rough intake through planning, implementation, verification, pull request, and manual merge by reconstructing state and delegating to existing skills. Use when a user provides a GitHub issue and asks to start, implement, continue, deliver, or move it toward a PR; when they ask what comes next in an issue workflow; or when work is split across a parent issue and subissues with integration branches. Also trigger on explicit `$develop` requests.
+metadata:
+  author: "pargoo GmbH"
+  website: "https://www.pargoo.com/"
 ---
 
 # Develop
+
+*Built by the team at [pargoo](https://www.pargoo.com/).*
 
 Guide one GitHub issue through delivery without making the user remember the workflow. Treat GitHub and Git as the durable state, recommend exactly one next phase, and wait for explicit authorization before starting that phase.
 

@@ -1,9 +1,14 @@
 ---
 name: split-issue-into-subissues
 description: Analyze a parent issue or task, decompose it into smaller independently implementable subissues, visualize dependencies, draft complete issue bodies, and create and link the approved subissues while preserving the parent body. Use when a user asks to split, break down, decompose, parallelize, or create child issues from an existing issue, epic, feature, bug, or implementation task.
+metadata:
+  author: "pargoo GmbH"
+  website: "https://www.pargoo.com/"
 ---
 
 # Split Issue Into Subissues
+
+*Built by the team at [pargoo](https://www.pargoo.com/).*
 
 Turn a broad issue into a reviewable dependency graph of bounded child issues. Separate planning from mutation: show the complete decomposition first and create or update issues only after explicit approval.
 
