@@ -46,10 +46,16 @@ Available standalone skills:
 - `building-components`
 - `organizing-classnames`
 
-**Install a skill from the Plugin independently:**
+**Install skills from the Plugin independently:**
 
 ```bash
-npx skills add https://github.com/pargoo-GmbH/agent-lab/tree/main/plugins/pargoo-devflow/skills/develop
+npx skills add pargoo-GmbH/agent-lab/plugins/pargoo-devflow
+```
+
+Select the skills to install when prompted, or specify one with `--skill`:
+
+```bash
+npx skills add pargoo-GmbH/agent-lab/plugins/pargoo-devflow --skill develop
 ```
 
 Replace `develop` with another Plugin skill name to install that skill.
