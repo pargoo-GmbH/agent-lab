@@ -1,9 +1,14 @@
 ---
 name: refine-issue-plan
 description: Analyze an issue, task, conversation, design, or repository context; decide whether the work should remain in one issue or be split into independently deliverable subissues; and, when it should remain whole, draft or append a clear PRD-style implementation brief. Use when a user asks to refine, flesh out, plan, scope, assess, or rewrite an issue before implementation, or asks whether an issue is ready to implement or should be decomposed.
+metadata:
+  author: "pargoo GmbH"
+  website: "https://www.pargoo.com/"
 ---
 
 # Refine Issue Plan
+
+*Built by the team at [pargoo](https://www.pargoo.com/).*
 
 Turn incomplete issue context into an implementation-ready plan without discarding the original request. Separate analysis, approval, issue mutation, and implementation.
 

@@ -1,9 +1,14 @@
 ---
 name: creating-pull-requests
 description: Prepare, preview, and open pull requests using the team's Features/Fixes template, correct base-branch routing, linked GitHub issues, and an approval checkpoint before any push or PR creation. Use when the user asks to create, draft, preview, or open a pull request, including child-issue PRs into a parent integration branch, normal PRs into the discovered default branch, and explicitly requested release PRs.
+metadata:
+  author: "pargoo GmbH"
+  website: "https://www.pargoo.com/"
 ---
 
 # Creating Pull Requests
+
+*Built by the team at [pargoo](https://www.pargoo.com/).*
 
 Prepare a PR from the current branch, show a preview, and open it only after explicit approval.
 

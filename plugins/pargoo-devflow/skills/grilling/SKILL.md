@@ -1,7 +1,14 @@
 ---
 name: grilling
 description: Conduct a dependency-aware, one-question-at-a-time interview to clarify requirements or stress-test a plan, idea, or decision, recommending an answer for each question. Use when the user asks to be grilled, requests an interactive requirements or decision interview, or another workflow invokes Grilling. Supports Quick, Balanced, and Deep modes.
+metadata:
+  author: "pargoo GmbH"
+  website: "https://www.pargoo.com/"
 ---
+
+# Grilling
+
+*Built by the team at [pargoo](https://www.pargoo.com/).*
 
 Interview the user until you reach a shared understanding. Maintain a **design tree**: each decision branches into the decisions that depend on it. Use decisions already established in the conversation or project context rather than asking the user to repeat them.
 

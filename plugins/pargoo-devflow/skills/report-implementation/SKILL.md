@@ -1,9 +1,14 @@
 ---
 name: report-implementation
 description: Verify every acceptance criterion for completed repository work, review the complete implementation against its intended base, and report the outcomes and verification results to the relevant GitHub issue. Use whenever the user asks to update an issue after implementation, summarize completed work in an issue, add implementation or verification notes, or report finished work before opening a PR. Run once after the current issue or subissue is fully implemented, never at per-commit checkpoints. Add an issue comment by default; only edit the issue body when explicitly requested.
+metadata:
+  author: "pargoo GmbH"
+  website: "https://www.pargoo.com/"
 ---
 
 # Report Implementation
+
+*Built by the team at [pargoo](https://www.pargoo.com/).*
 
 Use this skill once the current issue or subissue appears fully implemented. Verify every acceptance criterion and the complete branch before reporting its outcomes on the relevant GitHub issue. The usual moment is after implementation and before opening a PR. Do not use it for incremental commits or partial milestones. A failed gate may be re-entered after corrections within the same scope; never duplicate a successful report for an unchanged implementation.
 

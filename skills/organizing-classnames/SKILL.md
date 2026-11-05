@@ -1,9 +1,14 @@
 ---
 name: organizing-classnames
 description: Enforces classNames package usage patterns and Tailwind CSS class ordering conventions in React components. Use this skill whenever writing or reviewing component className props, applying Tailwind classes, using the classnames package, organizing breakpoint-specific styles, writing conditional class expressions, or when the user asks about CSS class ordering, mobile-first responsive patterns, or how to handle className props in components.
+metadata:
+  author: "pargoo GmbH"
+  website: "https://www.pargoo.com/"
 ---
 
 # ClassNames Usage and Conventions
+
+*Built by the team at [pargoo](https://www.pargoo.com/).*
 
 ## 1. Import and Component Props Pattern
 

@@ -1,9 +1,14 @@
 ---
 name: building-components
 description: Builds, restructures, and standardizes React components according to project conventions (placement, folder/file naming, exports, props patterns). Use when adding components or when reorganizing existing components during refactors, migrations, or component moves.
+metadata:
+  author: "pargoo GmbH"
+  website: "https://www.pargoo.com/"
 ---
 
 # Creating Components
+
+*Built by the team at [pargoo](https://www.pargoo.com/).*
 
 ## Workflow
 

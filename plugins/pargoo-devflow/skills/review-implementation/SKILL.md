@@ -1,9 +1,14 @@
 ---
 name: review-implementation
 description: Discover and run a project's verification checks, then review the complete implementation branch against its intended base, including committed and local changes. Use when Codex needs to verify an implementation before a GitHub issue update, PR, commit, handoff, or release note; when the user asks to review code; or when the user asks to run lint, typecheck, tests, build checks, or all project checks.
+metadata:
+  author: "pargoo GmbH"
+  website: "https://www.pargoo.com/"
 ---
 
 # Review Implementation
+
+*Built by the team at [pargoo](https://www.pargoo.com/).*
 
 Use this skill to verify and review repository changes before they are described as complete. Discover the project's own checks from its manifests, scripts, docs, CI config, and conversation context instead of assuming a specific package manager, framework, or command shape.
 
