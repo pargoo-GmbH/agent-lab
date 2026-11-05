@@ -1,0 +1,4 @@
+interface:
+  display_name: "Organizing Classnames"
+  short_description: "Organize classNames usage and Tailwind class ordering"
+  default_prompt: "Use $organizing-classnames to review and organize these React className props using the project's classNames and Tailwind class ordering conventions."
