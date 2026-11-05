@@ -1,0 +1,4 @@
+interface:
+  display_name: "Building Components"
+  short_description: "Build and organize React components by project conventions"
+  default_prompt: "Use $building-components to build or restructure these React components following the project's placement, naming, exports, and props conventions."

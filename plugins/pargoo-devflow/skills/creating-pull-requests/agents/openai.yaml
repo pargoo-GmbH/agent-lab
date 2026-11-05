@@ -1,0 +1,4 @@
+interface:
+  display_name: "Creating Pull Requests"
+  short_description: "Prepare, preview, and open pull requests with approval"
+  default_prompt: "Use $creating-pull-requests to inspect the current branch, choose the correct base, and preview the pull request before asking for approval to push and open it."
