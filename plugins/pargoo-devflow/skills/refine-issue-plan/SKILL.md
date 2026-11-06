@@ -1,6 +1,6 @@
 ---
 name: refine-issue-plan
-description: Analyze an issue, task, conversation, design, or repository context; decide whether the work should remain in one issue or be split into independently deliverable subissues; and, when it should remain whole, draft or append a clear PRD-style implementation brief. Use when a user asks to refine, flesh out, plan, scope, assess, or rewrite an issue before implementation, or asks whether an issue is ready to implement or should be decomposed.
+description: Analyze an issue, task, conversation, design, or repository context; decide whether the work should remain in one issue or be split into independently deliverable subissues; draft a clear PRD-style implementation brief; and create or update the issue after approval. Use when a user asks to refine, flesh out, plan, scope, assess, or rewrite a task or issue before implementation, create an issue from an agreed plan, or decide whether work is ready to implement or should be decomposed.
 metadata:
   author: "pargoo GmbH"
   website: "https://www.pargoo.com/"
@@ -15,12 +15,13 @@ Turn incomplete issue context into an implementation-ready plan without discardi
 ## 1. Resolve the task
 
 - Identify the exact tracker, repository or project, and issue when supplied.
-- Verify that any local checkout belongs to the resolved issue before using it as evidence.
+- Verify that any local checkout belongs to the resolved task's repository before using it as evidence. Without an issue, resolve the destination from supplied context and the checkout; ask when ambiguous.
 - Read the complete issue body, comments, attachments, metadata, linked designs, and existing child links when available.
 - Treat the current conversation as planning evidence. Capture approved decisions, rejected options, constraints, and intentional placeholders.
 - Inspect repository context for discoverable facts instead of asking the user. Read project instructions before inspecting or proposing changes.
 - When only issue text is available, work from it and mark repository-dependent details as unknown.
-- Use read-only operations during analysis. Do not modify the issue or implement the task yet.
+- Reuse an issue already supplied or created in the conversation. Do not search other issues for possible matches.
+- Use read-only operations during analysis. Do not create or modify an issue or implement the task yet.
 
 ## 2. Audit readiness
 
@@ -60,6 +61,7 @@ State the verdict first and explain the decisive reasons.
 
 ### If splitting is warranted
 
+- If no parent exists, preview a parent issue containing the source request and a brief with the confirmed goal, scope, and acceptance criteria. Obtain approval, create and verify it using section 6, then delegate decomposition. This establishes the parent without duplicating the child-planning workflow.
 - Use `$split-issue-into-subissues` when it is available and follow its approval and preservation workflow.
 - Pass the inspected issue context, current-state audit, confirmed decisions, and unresolved questions into that workflow.
 - Do not duplicate its full decomposition workflow here.
@@ -72,7 +74,7 @@ Continue with the implementation brief below.
 
 ## 4. Draft an implementation brief
 
-Preserve the original issue body as the source request. Append a managed section rather than rewriting the issue by default:
+Preserve the original issue body as the source request. For a new issue, retain the supplied task description before the brief. Append a managed section rather than rewriting the source request:
 
 ```markdown
 <!-- implementation-brief:start -->
@@ -139,11 +141,25 @@ Present:
 4. any issue metadata changes, if relevant;
 5. a statement that all unrelated existing content will be preserved.
 
+For a new issue, also show the exact target repository, proposed title, complete body (source request and brief), and any proposed metadata. Choosing to plan a new issue or confirming requirements does not authorize creation. Revised previews require approval before writing.
+
 Ask for explicit approval before creating, editing, linking, assigning, labeling, or closing issues. A request to analyze or draft is not approval to mutate the tracker.
 
 If the user asked only for a suggested body, stop after the preview.
 
-## 6. Update an approved issue safely
+## 6. Create or update an approved issue safely
+
+### New issue
+
+After approval of the complete preview:
+
+1. Confirm the destination and reuse any issue already created for this task.
+2. Create the issue once with the approved title, body, and metadata; retain the returned URL.
+3. Re-fetch it and verify its title, body, and metadata before returning the URL to the calling workflow.
+
+If creation fails or its outcome is uncertain, stop and resolve whether an issue was created using known identifiers or user input before retrying; do not blindly create another issue. Issue creation does not authorize implementation.
+
+### Existing issue
 
 After approval:
 
@@ -174,6 +190,6 @@ Before presenting the plan, confirm:
 Before mutating an issue, confirm:
 
 - the user approved the latest complete preview;
-- the target issue is exact;
-- the latest issue body was fetched;
+- the target issue or creation repository is exact;
+- the latest issue body was fetched when updating;
 - unrelated content will be preserved.

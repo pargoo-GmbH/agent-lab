@@ -1,6 +1,6 @@
 ---
 name: develop
-description: Coordinate a GitHub issue from rough intake through planning, implementation, verification, pull request, and manual merge by reconstructing state and delegating to existing skills. Use when a user provides a GitHub issue and asks to start, implement, continue, deliver, or move it toward a PR; when they ask what comes next in an issue workflow; or when work is split across a parent issue and subissues with integration branches. Also trigger on explicit `$develop` requests.
+description: Coordinate a task description or GitHub issue through planning, implementation, verification, pull request, and manual merge by reconstructing state and delegating to existing skills. Use when a user asks to start, implement, continue, deliver, or move a task or issue toward a PR, even without an existing issue; when they ask what comes next in an issue workflow; or when work is split across a parent issue and subissues with integration branches. Also trigger on explicit `$develop` requests.
 metadata:
   author: "pargoo GmbH"
   website: "https://www.pargoo.com/"
@@ -10,7 +10,7 @@ metadata:
 
 *Built by the team at [pargoo](https://www.pargoo.com/).*
 
-Guide one GitHub issue through delivery without making the user remember the workflow. Treat GitHub and Git as the durable state, recommend exactly one next phase, and wait for explicit authorization before starting that phase.
+Guide a task into a GitHub issue and through delivery without making the user remember the workflow. Treat GitHub and Git as the durable state once an issue exists, recommend exactly one next phase, and wait for explicit authorization before starting that phase.
 
 Remain a coordinator. Delegate specialized work to the existing skills named below instead of restating or reimplementing their procedures.
 
@@ -19,7 +19,7 @@ Remain a coordinator. Delegate specialized work to the existing skills named bel
 Resolve skills by name from the skills available in the current session, regardless of whether they are user-level or repository-local:
 
 - `grilling` for requirements interrogation
-- `refine-issue-plan` for the one-time parent planning decision and any subissue creation
+- `refine-issue-plan` for the one-time planning decision, new issue creation, and any subissue creation
 - `report-implementation` for the final acceptance-criteria, review, and verification gate for the current issue
 - `creating-pull-requests` for PR preparation, approval, push, creation, and base routing
 
@@ -31,7 +31,7 @@ Read each direct dependency's `SKILL.md` completely immediately before using it,
 
 ## Core Rules
 
-1. Reconstruct before acting. Inspect current GitHub and Git state on every invocation or resume.
+1. Reconstruct before acting. Inspect available GitHub and Git state on every invocation or resume.
 2. Propose one concrete next phase and wait. A user confirmation authorizes only that clearly proposed phase, including the bounded review corrections below when the reporting transition is authorized.
 3. Treat approval as transition authorization, not evidence that known failures pass.
 4. Never repeat completed planning or reporting work on a routine resume. A separately authorized new independent review run does not authorize duplicating a successful report for unchanged implementation.
@@ -40,11 +40,19 @@ Read each direct dependency's `SKILL.md` completely immediately before using it,
 7. Never stage, commit, push, open a PR, merge, close an issue, or update GitHub outside an authorized phase and the delegated skill's rules.
 8. Keep durable task state in GitHub and Git; keep Review Cycle state, scope, and counts in conversational context and the status footer. Do not create state files or tracker comments solely for retry state.
 
+## Entry Without an Issue
+
+Reuse an issue supplied earlier in the conversation or returned by verified creation. If none is known, ask: "Would you like to plan a new issue, or provide an existing one?" Wait for the answer; do not search repository issues for likely matches.
+
+If the user chooses an existing issue, wait for its reference. If they choose a new issue, resolve the target repository from supplied context and the checkout; ask when ambiguous. Follow the planning route below using the task and confirmed conversation decisions. The choice to plan a new issue does not approve tracker writes or implementation.
+
+For a task with clear requirements, recommend refinement directly; an issue still needs to be created even if the task is implementation-ready. Delegate creation to `refine-issue-plan`, which previews the complete issue for approval. After verified creation, use the returned issue URL and the established delivery route.
+
 ## Reconstruct State
 
 Perform read-only discovery first:
 
-- Resolve the repository from the current checkout and read the latest issue body, comments, state, relationships, and linked PRs.
+- Resolve the repository from supplied context and the current checkout. When an issue is known, read its latest body, comments, state, relationships, and linked PRs.
 - Discover the repository's actual default branch from GitHub or authoritative repository metadata.
 - Inspect the current branch, working tree, commits, merge bases, remote branches, and PR base/head/status.
 - Determine whether the issue is a parent, a subissue, or a standalone issue from explicit GitHub relationships and established context.
@@ -52,7 +60,7 @@ Perform read-only discovery first:
 - Distinguish work already planned, implemented, reported, opened as a PR, merged, or closed.
 - Do not infer an issue solely from a branch name.
 
-If issue identity, parent relationship, intended base, or branch ownership remains materially ambiguous, stop and ask for the missing fact.
+If an existing issue's identity, parent relationship, intended base, or branch ownership remains materially ambiguous, stop and ask for the missing fact. A task awaiting issue creation stays in planning.
 
 ## Choose the Current Phase
 
@@ -73,7 +81,7 @@ Treat closed or merged states that disagree with the intended route as discrepan
 
 ## Planning Route
 
-### Rough issue
+### Rough task or issue
 
 Recommend a `grilling` phase and wait. After authorization, delegate the session to `grilling`. When it finishes, recommend `refine-issue-plan` and wait again.
 
@@ -83,7 +91,7 @@ If the issue already contains a clear implementation brief, scope, constraints, 
 
 ### Refinement
 
-Run `refine-issue-plan` only once for the parent issue. Let it decide whether the work remains one issue or is split and let it own subissue creation. After refinement finishes, recommend implementation and pause until the user explicitly says to implement or confirms that phase.
+Run `refine-issue-plan` only once for the task or parent issue. Let it decide whether the work remains one issue or is split and own approved issue creation. Without an existing issue, require a verified issue URL before leaving refinement. After refinement finishes, recommend implementation and pause until the user explicitly says to implement or confirms that phase.
 
 Never rerun parent refinement merely because the workflow resumed or moved to a child issue.
 
@@ -182,6 +190,8 @@ After all required child PRs merge:
 
 ## Resume Behavior
 
+Before issue creation, recover planning choices and confirmed requirements from the conversation. Once an issue is created, reuse its URL. If creation failed or its outcome is uncertain, resolve that outcome through `refine-issue-plan` before retrying or recommending implementation.
+
 Interpret `continue`, `what is next?`, or an equivalent request as authorization to reconstruct state and recommend one next phase, not to execute multiple phases automatically. Preserve a previously authorized, recoverable **active** Review Cycle and its bounded corrections; do not request another OK merely for its remaining automatic attempts. Completed and stopped cycles remain history; do not resume them or automatically restart them.
 
 When waiting for a PR merge, inspect its current state:
@@ -194,6 +204,8 @@ When waiting for a PR merge, inspect its current state:
 ## Status Footer
 
 End every response with a compact GitHub-oriented footer. Keep the final answer self-contained.
+
+Before creation, use the standalone footer with `Issue: not created — <short task>` and `Branch/base: not assigned -> <discovered default branch or unresolved>`.
 
 For standalone issues:
 
