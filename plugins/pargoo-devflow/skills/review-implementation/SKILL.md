@@ -8,7 +8,7 @@ metadata:
 
 # Review Implementation
 
-_Built by the team at [pargoo](https://www.pargoo.com/)._
+*Built by the team at [pargoo](https://www.pargoo.com/).*
 
 Use this skill to verify and review repository changes before they are described as complete. Discover the project's own checks from its manifests, scripts, docs, CI config, and conversation context instead of assuming a specific package manager, framework, or command shape.
 
