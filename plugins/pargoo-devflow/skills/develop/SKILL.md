@@ -125,7 +125,7 @@ A successful posted report is the durable completion signal for that scope and i
 
 ## Independent Local Review Cycle
 
-Only `develop` owns automatic corrections and the attempt counter. `report-implementation` coordinates the gate; `review-implementation` invokes one fresh configured reviewer per independent attempt and returns results through reporting. Neither dependency implements fixes or runs a retry loop.
+Only `develop` owns automatic corrections and the attempt counter. `report-implementation` coordinates the gate; `review-implementation` invokes one fresh independent general-purpose reviewer per attempt and returns results through reporting. Neither dependency implements fixes or runs a retry loop.
 
 Track one cycle per independently initiated review run, including its automatic corrections and re-reviews. When the user authorizes a new reporting/review run, initialize an active cycle at `0/3`; its first completed independent review counts as `1/3`. A later, separately authorized run starts at `0/3` even for the same Issue, branch, implementation scope, or conversation. Earlier counts are history, not the new run's counter.
 
