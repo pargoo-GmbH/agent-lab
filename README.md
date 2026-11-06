@@ -16,7 +16,7 @@ Manage Strapi content through your agent, with a panel for projects, environment
 
 ### pargoo DevFlow
 
-A plugin for AI-assisted software development, from GitHub Issue to Pull Request.
+A plugin for AI-assisted software development, from a task description or GitHub Issue to Pull Request.
 
 **Included skills:**
 

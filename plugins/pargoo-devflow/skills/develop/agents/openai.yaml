@@ -1,4 +1,4 @@
 interface:
   display_name: "Develop"
-  short_description: "Guide GitHub issues from planning through PR"
-  default_prompt: "Use $develop to inspect this GitHub issue, determine its current delivery phase, and recommend the next step."
+  short_description: "Guide tasks or GitHub issues through delivery"
+  default_prompt: "Use $develop to inspect this task or GitHub issue, determine its current delivery phase, and recommend the next step."
