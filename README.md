@@ -18,7 +18,7 @@ Manage Strapi content through your agent, with a panel for projects, environment
 
 A plugin for AI-assisted software development, from a task description or GitHub Issue to Pull Request.
 
-GitHub CLI (`gh`) is recommended for full GitHub workflow support.
+GitHub CLI (gh) is recommended for full GitHub workflow support; otherwise equivalent GitHub tooling is required.
 
 **Included skills:**
 
