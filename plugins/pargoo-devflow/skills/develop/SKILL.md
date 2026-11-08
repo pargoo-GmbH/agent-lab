@@ -37,7 +37,7 @@ Read each direct dependency's `SKILL.md` completely immediately before using it,
 4. Never repeat completed planning or reporting work on a routine resume. A separately authorized new independent review run does not authorize duplicating a successful report for unchanged implementation.
 5. Never hardcode repository names, issue numbers, branch names, or a default branch.
 6. Never infer a release. Use a release PR route only when the user explicitly requests a release.
-7. Never stage, commit, push, open a PR, merge, close an issue, or update GitHub outside an authorized phase and the delegated skill's rules.
+7. Never stage, commit, push, open a PR, merge, close an issue, or update GitHub outside an authorized phase. Follow Implementation Authorization below for branch creation and issue linking, and the delegated skill's rules for other phase-specific writes.
 8. Keep durable task state in GitHub and Git; keep Review Cycle state, scope, and counts in conversational context and the status footer. Do not create state files or tracker comments solely for retry state.
 
 ## Entry Without an Issue
@@ -53,6 +53,7 @@ For a task with clear requirements, recommend refinement directly; an issue stil
 Perform read-only discovery first:
 
 - Resolve the repository from supplied context and the current checkout. When an issue is known, read its latest body, comments, state, relationships, and linked PRs.
+- Read the issue's GitHub-linked branches and check their repository, remote existence, and relevant PR state. A branch left over from completed work is not automatically suitable for new implementation.
 - Discover the repository's actual default branch from GitHub or authoritative repository metadata.
 - Inspect the current branch, working tree, commits, merge bases, remote branches, and PR base/head/status.
 - Determine whether the issue is a parent, a subissue, or a standalone issue from explicit GitHub relationships and established context.
@@ -60,7 +61,9 @@ Perform read-only discovery first:
 - Distinguish work already planned, implemented, reported, opened as a PR, merged, or closed.
 - Do not infer an issue solely from a branch name.
 
-If an existing issue's identity, parent relationship, intended base, or branch ownership remains materially ambiguous, stop and ask for the missing fact. A task awaiting issue creation stays in planning.
+GitHub's issue-to-branch link is the normal ownership evidence. The current checkout, a matching name, or shared ancestry alone does not establish intent. Also recover any explicit user choice of an alternative feature branch for this issue; that choice can resolve ownership without a GitHub link.
+
+If an existing issue's identity, parent relationship, intended base, or branch choice remains materially ambiguous, stop and ask for the missing fact. Use Issue branch setup below to resolve branch choice before implementation edits; do not silently switch a potentially intentional checkout. A task awaiting issue creation stays in planning.
 
 ## Choose the Current Phase
 
@@ -100,12 +103,41 @@ Never rerun parent refinement merely because the workflow resumed or moved to a 
 An explicit `implement` instruction or confirmation of a clearly proposed implementation phase authorizes:
 
 - selecting or reusing the correct implementation branch;
-- creating the required branch when it does not exist; and
+- creating the required remote branch and linking it to the issue when no suitable branch exists;
+- safely checking out the selected branch; and
 - implementing the current standalone issue or selected subissue.
 
-For a standalone issue, branch from the discovered default branch. For split work, branch the parent integration branch from the discovered default branch, then branch each child from that parent branch. Follow repository branch conventions. Reuse an existing correct branch; do not create duplicates.
+Require a verified issue URL before branch setup. Planning alone creates no branches. Implementation authorization covers the initial remote branch creation and its GitHub issue link, not staging, commits, pushing implementation commits, PR creation, or release. Apply existing repository permissions and any external approval requirements.
 
 Use relevant repository instructions and skills during implementation. Plan mode is optional: use it when explicitly requested, or recommend it when unusual complexity makes an additional implementation plan valuable. It is not workflow state.
+
+### Issue branch setup
+
+Before implementation edits on start or resume, resolve the issue, branch choice, and intended base from reconstructed state:
+
+1. **Respect an explicit choice.** Use an alternative feature branch when the user explicitly chose it for this issue, including an experimental branch derived from a linked branch. It need not be published, linked, or automatically relinked. Do not repeatedly ask while that choice remains applicable and recoverable; reassess if the issue, checkout, or delivery context changes materially.
+2. **Reuse when clear.** Reuse a suitable existing linked branch when the selection is clear. If the current checkout is the default branch, belongs to previous work, or otherwise has an unclear relationship to this issue, ask one focused branch-choice question before editing unless an explicit choice already resolves it. Recommend the suitable linked branch, or creating one if none exists. Ask when several candidates remain plausible; do not silently override a potentially intentional checkout or create a duplicate to avoid resolving ambiguity.
+3. **Protect uncommitted work.** If switching is needed and the working tree has uncommitted changes, show the affected files and intended branch and ask how to proceed. Do not automatically stash, commit, discard, or carry changes across branches. Changes on an already selected branch do not by themselves require a switch or another branch-choice question.
+4. **Create only when needed.** After the choice is resolved and implementation is authorized, create a missing branch remotely with a GitHub link to its issue. Follow repository and agent branch naming conventions, using the issue number and a short title where appropriate. Check for an existing remote or local branch with the proposed name before creating it; an unlinked name collision requires resolution, not assumed ownership or blind reuse.
+
+For new standalone branches and parent integration branches, use the latest remote version of the discovered default branch. For each new child branch, use the latest remote version of the verified parent integration branch. Link the parent integration branch to the parent issue and each child branch to its own child issue. Never derive the base from an unrelated current checkout or stale local default branch; ask if the required parent branch is ambiguous. Reusing an existing branch or an explicit alternative does not authorize rebasing or resetting it to a new base.
+
+Use supported GitHub tooling. With GitHub CLI, resolve the issue URL, repository, remote base name, and proposed branch name before using [gh issue develop](https://cli.github.com/manual/gh_issue_develop):
+
+```bash
+# Read-only discovery; does not create a branch.
+gh issue develop "$issue_url" --repo "$repo" --list
+
+# Only after implementation authorization and branch-choice resolution.
+# --base names the remote source branch; creation also links the issue.
+gh issue develop "$issue_url" --repo "$repo" --base "$base" --name "$branch" --checkout
+```
+
+Use the resolved branch repository explicitly when it differs from the issue repository; with GitHub CLI, supply `--branch-repo`. Confirm that the checkout's remote points to the intended branch repository.
+
+Before editing, verify the active local checkout is the selected branch. For linked or agent-created branches, verify the remote ref exists in the intended repository; every agent-created branch must also be listed as linked to its issue. For a new branch, verify its starting commit against the resolved remote base. An existing user-selected alternative can remain local and unlinked under the explicit-choice exception above.
+
+If discovery, creation, linking, or checkout fails or has an uncertain outcome, inspect the remote ref, issue links, and local checkout before retrying. Reuse a successfully created and linked branch rather than creating another. If the state cannot be verified or a partial result requires a decision, explain the blocker and stop before implementation edits. Do not report success or silently fall back to an unverified branch.
 
 ### Manual commit checkpoints
 
@@ -172,7 +204,7 @@ For each child:
 1. Reconstruct parent, child, branch, dependency, and PR state.
 2. Select the next unblocked child by dependency order, foundational value, and risk reduction.
 3. Recommend that child and wait; allow the user to override the order.
-4. Implement it on a child branch based on the parent integration branch.
+4. Apply Issue branch setup for that child, linking any new child branch to the child issue and basing it on the parent integration branch; then implement it.
 5. After all child acceptance criteria appear satisfied, recommend and then delegate one `report-implementation` gate for that child.
 6. After successful reporting, recommend and then delegate `creating-pull-requests`, explicitly supplying the parent integration branch as the base.
 7. Wait for manual review and merge into the parent integration branch.
@@ -191,6 +223,8 @@ After all required child PRs merge:
 ## Resume Behavior
 
 Before issue creation, recover planning choices and confirmed requirements from the conversation. Once an issue is created, reuse its URL. If creation failed or its outcome is uncertain, resolve that outcome through `refine-issue-plan` before retrying or recommending implementation.
+
+Before resuming implementation edits, repeat the read-only branch checks and apply Issue branch setup. Preserve a still-applicable explicit alternative branch choice from recoverable context. A branch name or checkout change alone does not prove a new issue association; clarify changed or lost intent instead of repeatedly asking about an unchanged choice. Resume does not authorize duplicate branch creation, automatic relinking of experiments, or moving uncommitted work.
 
 Interpret `continue`, `what is next?`, or an equivalent request as authorization to reconstruct state and recommend one next phase, not to execute multiple phases automatically. Preserve a previously authorized, recoverable **active** Review Cycle and its bounded corrections; do not request another OK merely for its remaining automatic attempts. Completed and stopped cycles remain history; do not resume them or automatically restart them.
 
