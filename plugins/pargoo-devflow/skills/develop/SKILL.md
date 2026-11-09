@@ -50,13 +50,11 @@ Preserve the current phase, Issue and parent/child context, interrupted step, es
 
 Helper Issue comments require separate preview approval; phase authorization is insufficient. Handle review questions only after results return to the orchestrator; the reviewer remains read-only and must not publish, modify files, or delegate to the helper.
 
-## Entry Without an Issue
+## Issue Context at Entry
 
-Reuse an issue supplied earlier in the conversation or returned by verified creation. If none is known, ask: "Would you like to plan a new issue, or provide an existing one?" Wait for the answer; do not search repository issues for likely matches.
+Reuse an issue supplied earlier in the conversation or returned by verified creation. After reconstructing available state, if none is known, ask whether an issue already exists for this task and request its reference if so. Wait for an unambiguous answer; do not search repository issues for likely matches or interpret a generic acknowledgment as a choice.
 
-If the user chooses an existing issue, wait for its reference. If they choose a new issue, resolve the target repository from supplied context and the checkout; ask when ambiguous. Follow the planning route below using the task and confirmed conversation decisions. The choice to plan a new issue does not approve tracker writes or implementation.
-
-For a task with clear requirements, recommend refinement directly; an issue still needs to be created even if the task is implementation-ready. Delegate creation to `refine-issue-plan`, which previews the complete issue for approval. After verified creation, use the returned issue URL and the established delivery route.
+This question only discovers existing context; it does not initiate issue creation. If no issue exists, continue with the task and select the appropriate phase based on requirements. Issue creation belongs to authorized `refine-issue-plan` after any needed clarification.
 
 ## Reconstruct State
 
@@ -79,8 +77,8 @@ Ask for missing facts only when the issue, parent relationship, intended base, o
 
 Use the first matching state:
 
-1. **Needs discovery**: the issue has only a rough idea, links, or materially incomplete requirements.
-2. **Needs refinement**: grilling is complete but the parent issue has not received its implementation brief or split decision.
+1. **Needs discovery**: the task or issue has only a rough idea, links, or materially incomplete requirements.
+2. **Needs refinement**: requirements are sufficiently clear, but no issue exists or the existing issue still needs its implementation brief or split decision.
 3. **Ready to implement**: the current issue has an adequate brief and testable acceptance criteria, with no implementation yet complete.
 4. **Implementation in progress**: code is incomplete, has known failures, or has blocking review feedback.
 5. **Ready to report**: implementation appears complete and every acceptance criterion has credible evidence, but `report-implementation` has not successfully completed for this issue.
