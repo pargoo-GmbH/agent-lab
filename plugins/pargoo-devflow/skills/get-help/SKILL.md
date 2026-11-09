@@ -32,6 +32,8 @@ When another person's input is required or explicitly requested, prepare a conci
 
 Exclude unnecessary history, private reasoning, speculative claims, and unrelated sensitive data. A draft does not mean anyone was notified. Do not contact people or invent assignments through this handoff.
 
+Once human handoff is needed because the user still cannot decide after guidance, stop trying to resolve that question through further recommendations to the user. Preserve the unresolved question and pending handoff; reopen the decision with the user only at their explicit request. Generic acknowledgments, agreement to continue independent work, summary approval, or reopening alone do not resolve the question or cancel the handoff. Preparing or publishing the handoff does not resolve the question.
+
 ## Optional Issue comment
 
 Offer an Issue comment when human input is needed or explicitly requested and an existing Issue is available. Use supported GitHub tooling; `gh` is not required when equivalent tools exist.
