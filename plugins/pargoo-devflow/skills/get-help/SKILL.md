@@ -51,4 +51,4 @@ This operation permits only the separately approved comment. Do not change Issue
 
 Give a short, understandable result containing the question, established facts or recommendation, any confirmed decision, remaining human decision and known owner, handoff/publication status, verified Issue/comment links when available, blocked and independent work, and the immediate next action. Use conversation context and existing artifacts without custom state files or complex schemas.
 
-Return control with unresolved questions intact. Resolving a question does not grant authorization for another workflow phase or turn failed or blocked verification into a pass.
+Before returning control, clearly state whether the question is resolved or unresolved and what will happen with any handoff. If unresolved, keep it open and explicitly ask for the user's next action; wait for their answer before advancing to another question or work. Resolving a question does not grant authorization for another workflow phase or turn failed or blocked verification into a pass.

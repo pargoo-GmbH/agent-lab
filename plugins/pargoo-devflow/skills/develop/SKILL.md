@@ -46,9 +46,11 @@ When the user cannot answer, needs decision guidance, requests another person's 
 
 If unavailable, offer basic guidance or a manual handoff draft without reproducing the helper's GitHub escalation workflow. Its absence does not block ordinary DevFlow execution.
 
-Preserve the current phase, Issue and parent/child context, interrupted step, established decisions, authorization, and Review Cycle state/count. Apply the result without repeating the investigation. Keep unresolved decisions open and pause only dependent actions; continue independent, authorized work where safe and resume the interrupted step when its required decision is resolved.
+Preserve the current phase, Issue and parent/child context, interrupted step, established decisions, authorization, and Review Cycle state/count. Apply the result without repeating the investigation. Finish handling the current question before resuming the interrupted workflow, including the next `grilling` question. If unresolved, establish whether the user wants to pause or continue independent, authorized work where safe; reuse an explicit choice already obtained by `get-help`. Keep unresolved decisions open and dependent actions blocked until the necessary decision is resolved.
 
-Helper Issue comments require separate preview approval; phase authorization is insufficient. Handle review questions only after results return to the orchestrator; the reviewer remains read-only and must not publish, modify files, or delegate to the helper.
+For a human handoff with a suitable existing Issue, have `get-help`, when available, offer publication through its existing comment procedure, including separate preview approval and returning the verified comment URL after posting; phase authorization is insufficient. Without an Issue, preserve the unresolved question and handoff draft in conversation context and explain that nothing has been published. When a relevant Issue is created later, revisit any pending handoff and offer publication through the same procedure before resuming. Neither Issue creation nor handoff publication resolves the question.
+
+Handle review questions only after results return to the orchestrator; the reviewer remains read-only and must not publish, modify files, or delegate to the helper.
 
 ## Issue Context at Entry
 
