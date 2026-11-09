@@ -24,6 +24,7 @@ GitHub CLI (gh) is recommended for full GitHub workflow support; otherwise equiv
 
 - `develop`
 - `grilling`
+- `get-help`
 - `refine-issue-plan`
 - `split-issue-into-subissues`
 - `report-implementation`
