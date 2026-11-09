@@ -1,0 +1,4 @@
+interface:
+  display_name: "Handle Uncertainty"
+  short_description: "Resolve questions and prepare human handoffs"
+  default_prompt: "Use $handle-uncertainty to investigate this unresolved question, explain the options, recommend an approach, and prepare a human handoff if needed."
