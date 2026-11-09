@@ -31,8 +31,6 @@ GitHub CLI (gh) is recommended for full GitHub workflow support; otherwise equiv
 - `review-implementation`
 - `creating-pull-requests`
 
-Use `handle-uncertainty` directly to investigate an unresolved question, understand options, or prepare a human handoff. `develop` optionally delegates to it when decision guidance or human input is needed; posting an Issue comment requires separate approval.
-
 #### Install Plugin (Codex)
 
 ```bash
