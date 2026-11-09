@@ -1,12 +1,12 @@
 ---
-name: handle-uncertainty
+name: get-help
 description: Investigate unresolved questions and decisions, help users understand their options, recommend evidence-based approaches, and seek human input when needed or requested. Use when a user cannot answer a question, lacks the expertise to make a decision, requests another person's input, or encounters uncertainty that may block progress.
 metadata:
   author: "pargoo GmbH"
   website: "https://www.pargoo.com/"
 ---
 
-# Handle Uncertainty
+# Get Help
 
 *Built by the team at [pargoo](https://www.pargoo.com/).*
 

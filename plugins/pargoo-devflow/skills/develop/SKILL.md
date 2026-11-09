@@ -37,12 +37,12 @@ Read each direct dependency's `SKILL.md` completely immediately before using it,
 4. Never repeat completed planning or reporting work on a routine resume. A separately authorized new independent review run does not authorize duplicating a successful report for unchanged implementation.
 5. Never hardcode repository names, issue numbers, branch names, or a default branch.
 6. Never infer a release. Use a release PR route only when the user explicitly requests a release.
-7. Never stage, commit, push, open a PR, merge, close an issue, or update GitHub outside an authorized phase, except a separately approved `handle-uncertainty` Issue comment during an uncertainty interruption. Follow Implementation Authorization below for branch creation and issue linking, and the delegated skill's rules for other writes.
+7. Never stage, commit, push, open a PR, merge, close an issue, or update GitHub outside an authorized phase, except a separately approved `get-help` Issue comment during an uncertainty interruption. Follow Implementation Authorization below for branch creation and issue linking, and the delegated skill's rules for other writes.
 8. Keep durable task state in GitHub and Git; keep Review Cycle state, scope, and counts in conversational context and the status footer. Do not create state files or tracker comments solely for retry state.
 
 ## Uncertainty Interruptions
 
-When the user cannot answer, needs decision guidance, requests another person's input, or a material unresolved question prevents safe progress, check whether the optional `handle-uncertainty` skill is available. If available, read its `SKILL.md` completely and delegate the specific question with relevant context. Ordinary questions and minor implementation problems stay with the current workflow.
+When the user cannot answer, needs decision guidance, requests another person's input, or a material unresolved question prevents safe progress, check whether the optional `get-help` skill is available. If available, read its `SKILL.md` completely and delegate the specific question with relevant context. Ordinary questions and minor implementation problems stay with the current workflow.
 
 If unavailable, offer basic guidance or a manual handoff draft without reproducing the helper's GitHub escalation workflow. Its absence does not block ordinary DevFlow execution.
 
