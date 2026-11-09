@@ -1,6 +1,6 @@
 ---
 name: handle-uncertainty
-description: Investigate unresolved questions and decisions, help users understand their options, recommend evidence-based approaches, and seek human input when necessary. Use when a user cannot answer a question, lacks the expertise to make a decision, or encounters uncertainty that may block progress.
+description: Investigate unresolved questions and decisions, help users understand their options, recommend evidence-based approaches, and seek human input when needed or requested. Use when a user cannot answer a question, lacks the expertise to make a decision, requests another person's input, or encounters uncertainty that may block progress.
 metadata:
   author: "pargoo GmbH"
   website: "https://www.pargoo.com/"
@@ -22,22 +22,22 @@ Help the user move past an unanswered question without inventing a decision or r
 
 ## Human handoff
 
-For uncertainty requiring another person's input, prepare a concise request that can be answered without reading the full conversation. Include only relevant fields:
+When another person's input is required or explicitly requested, prepare a concise handoff even if you have a recommended solution. Make it answerable without reading the full conversation. Include only relevant fields:
 
 - **Question:** The specific decision or information needed.
 - **Context:** Essential facts and constraints.
 - **Options / recommendation:** Practical alternatives and a supported recommendation, if available.
-- **Why input is required:** Missing evidence, authority, or material risk.
+- **Why input is requested:** Missing evidence, authority, material risk, or the user's requested consultation.
 - **Impact:** What is blocked and what can continue independently.
 
 Exclude unnecessary history, private reasoning, speculative claims, and unrelated sensitive data. A draft does not mean anyone was notified. Do not contact people or invent assignments through this handoff.
 
 ## Optional Issue comment
 
-Offer an Issue comment when human input is needed and an existing Issue is available. Use supported GitHub tooling; `gh` is not required when equivalent tools exist.
+Offer an Issue comment when human input is needed or explicitly requested and an existing Issue is available. Use supported GitHub tooling; `gh` is not required when equivalent tools exist.
 
 1. Resolve and verify the repository and intended Issue from established context. Use the active child Issue for child-specific blockers, otherwise the relevant current Issue. Read relevant existing comments to check for an answer or prior escalation.
-2. If input is still needed and no equivalent request exists, preview the complete concise handoff comment and exact target Issue. Obtain explicit approval for that preview before posting; phase authorization or approval of a recommendation is not comment approval. If the preview or target changes, obtain approval again.
+2. If the request remains open and no equivalent request exists, preview the complete concise handoff comment and exact target Issue. Obtain explicit approval for that preview before posting; phase authorization or approval of a recommendation is not comment approval. If the preview or target changes, obtain approval again.
 3. After approval, publish with the required tool permissions, re-fetch and verify the published comment, and return its URL when available. Distinguish drafted, approved, posted, and verified outcomes. Never claim publication or notification without evidence.
 4. On resume or after an uncertain write outcome, inspect existing context and comments before retrying. Reuse a matching request; if publication cannot be determined, stop publication and explain the uncertainty rather than risk a duplicate. Evaluate any reply against the actual unanswered question and necessary authority; a posted comment or a reply alone does not resolve it.
 

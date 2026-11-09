@@ -22,9 +22,8 @@ Resolve skills by name from the skills available in the current session, regardl
 - `refine-issue-plan` for the one-time planning decision, new issue creation, and any subissue creation
 - `report-implementation` for the final acceptance-criteria, review, and verification gate for the current issue
 - `creating-pull-requests` for PR preparation, approval, push, creation, and base routing
-- `handle-uncertainty` for material unanswered questions, decision guidance, and human handoffs
 
-Before delegating any workflow phase or uncertainty interruption, confirm all direct dependencies are available. If any are missing, stop and name them. Do not improvise a replacement workflow or assume a filesystem path.
+Before delegating any workflow phase, confirm all four direct dependencies are available. If any are missing, stop and name them. Do not improvise a replacement workflow or assume a filesystem path.
 
 Do not call `split-issue-into-subissues` directly; `refine-issue-plan` owns that decision and dependency. Do not call `review-implementation` separately; `report-implementation` owns the review gate, invokes that skill at most once when available, and returns BLOCKED if the independent-review dependency is unavailable. Each reporting attempt delegates review once; only this orchestrator controls re-entry after corrections.
 
@@ -43,15 +42,13 @@ Read each direct dependency's `SKILL.md` completely immediately before using it,
 
 ## Uncertainty Interruptions
 
-At any stage, delegate the specific question to `handle-uncertainty` when the user cannot answer, needs help understanding a decision, requests another person's input, or a material unresolved question prevents safe progress, including decisions surfaced by delegated work. Ordinary questions and minor implementation problems stay with the current workflow.
+When the user cannot answer, needs decision guidance, requests another person's input, or a material unresolved question prevents safe progress, check whether the optional `handle-uncertainty` skill is available. If available, read its `SKILL.md` completely and delegate the specific question with relevant context. Ordinary questions and minor implementation problems stay with the current workflow.
 
-Handle this within the current phase, not as a new mandatory phase or phase transition. Preserve the Issue and parent/child context, interrupted step, established decisions, phase authorization, and Review Cycle state/count. Pass that context and the specific uncertainty to the helper. Use supported delegation and continuation mechanisms; when an active step must return first, retain its context and resume it afterward rather than assume an interrupt API exists.
+If unavailable, offer basic guidance or a manual handoff draft without reproducing the helper's GitHub escalation workflow. Its absence does not block ordinary DevFlow execution.
 
-Apply the helper's result without repeating its investigation. Resume the interrupted step once its required decision is resolved; otherwise stop only dependent actions and continue independent, authorized work where safe. On later continuation, reread available relevant evidence, including Issue comments, and establish whether the actual question was answered. Do not rerun completed phases or treat a recommendation, escalation, or arbitrary reply as a confirmed decision.
+Preserve the current phase, Issue and parent/child context, interrupted step, established decisions, authorization, and Review Cycle state/count. Apply the result without repeating the investigation. Keep unresolved decisions open and pause only dependent actions; continue independent, authorized work where safe and resume the interrupted step when its required decision is resolved.
 
-Before an Issue exists, preserve `grilling -> refine-issue-plan -> approved Issue creation`; carry unresolved questions into the brief without declaring planning or implementation ready while essential decisions remain open. For an existing Issue, escalation alone does not require another refinement run.
-
-Phase authorization does not approve a helper comment; the helper owns its separate preview, approval, and publication gate. Resolving uncertainty grants no implementation, reporting, PR, or release authorization. Handle review questions only after results return to the orchestrator; the reviewer remains read-only and must not publish, modify files, or delegate to the helper. Preserve verification outcomes, reporting completion criteria, and the Independent Local Review Cycle's stop, restart, and attempt-limit rules; escalation cannot turn a failed or blocked gate into a pass.
+Helper Issue comments require separate preview approval; phase authorization is insufficient. Handle review questions only after results return to the orchestrator; the reviewer remains read-only and must not publish, modify files, or delegate to the helper.
 
 ## Entry Without an Issue
 
