@@ -53,7 +53,7 @@ Consider automated and manual checks, representative environments/data, reversib
 Return exactly one final decision for a sufficiently defined scope, using evidence-based judgment rather than a numeric formula:
 
 - **Agent-led:** The scope and approach are sufficiently understood, bounded, safe, and verifiable within existing permissions. Normal risk with adequate controllability generally qualifies, even at High complexity. Elevated risk qualifies only when inspected safeguards, verification, reversibility, and impact limits adequately control the actual risks.
-- **Developer-led:** The current scope requires implementation by a human developer. Critical risk always requires this result. Also use it when controllability is insufficient for material consequences, including risks that remain unverifiable after reasonable investigation.
+- **Developer-led:** Implementation by a human developer is recommended for the current scope. Critical risk always requires this result. Also use it when controllability is insufficient for material consequences, including risks that remain unverifiable after reasonable investigation.
 
 For this prototype, changes involving irreversible production data operations, critical access-control boundaries, production credentials or protected environment access, or material weakening of security/deployment protections are Developer-led. Respect repository protections and human-controlled operations regardless of classification.
 
@@ -68,7 +68,7 @@ Use these examples to distinguish actual changes, not as keyword-based rejection
 | Service integrations | Isolated stable APIs with verifiable contracts | High-impact interservice contracts, data flows, or critical transactions without adequate controls |
 | Authentication / authorization | Isolated changes preserving security boundaries | Critical authorization rules or access-control boundary changes |
 
-Developer-led restricts the currently assessed scope. A generic acknowledgment or direct implementation request does not override it. Reassess only after material scope changes, meaningful new evidence, or changed safeguards; do not repeat unchanged assessments to seek a more favorable result. Do not introduce a developer-approval outcome, wait for technical approval, or automatically launch `get-help` or a publication/assignment workflow.
+Developer-led blocks agent implementation by default. The user may override this recommendation through the orchestrator's explicit risk-confirmation mechanism; the assessment remains Developer-led. This skill only assesses and does not request or accept override confirmation. Reassess only after material scope changes, meaningful new evidence, or changed safeguards; do not repeat unchanged assessments to seek a more favorable result. Do not introduce a developer-approval outcome, wait for technical approval, or automatically launch `get-help` or a publication/assignment workflow.
 
 ## Return a concise assessment
 
