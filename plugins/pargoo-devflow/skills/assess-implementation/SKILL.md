@@ -72,19 +72,19 @@ Developer-led restricts the currently assessed scope. A generic acknowledgment o
 
 ## Return a concise assessment
 
-Use this structure for a completed assessment, keeping the scope and explanation understandable to a nontechnical user:
+Present every completed assessment as a distinct Markdown section using this structure, keeping the task-specific explanation understandable to a nontechnical user:
 
 ```markdown
 ### Implementation Assessment
 
-**Scope:** <task or Issue/child and bounded change>
-**Complexity:** Low / Medium / High
-**Risk:** Normal / Elevated / Critical
-**Controllability:** High / Medium / Low
-**Decision:** Agent-led / Developer-led
+| Dimension | Result |
+| --- | --- |
+| Complexity | Low / Medium / High |
+| Risk | Normal / Elevated / Critical |
+| Controllability | High / Medium / Low |
+| **Decision** | **Agent-led / Developer-led** |
 
 **Reason:** <brief task-specific evidence and any material limitations>
-**Next step:** <implementation under the caller's existing authorization rules, or implementation by a human developer>
 ```
 
-Select one value per field. Distinguish inspected facts from unresolved assumptions; use no numeric confidence scores, artificial risk scores, or lengthy reports. For missing prerequisites, return a short explanation of what is missing and what must be resolved instead of this completed-assessment template.
+Select one value per table row and keep Reason outside the table. Keep workflow recommendations and authorization questions separate from the assessment; the caller owns the next workflow action. Distinguish inspected facts from unresolved assumptions; use no numeric confidence scores, artificial risk scores, or lengthy reports. For missing prerequisites, return a short explanation of what is missing and what must be resolved instead of this completed-assessment template.
