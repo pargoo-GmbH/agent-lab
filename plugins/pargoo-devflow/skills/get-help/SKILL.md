@@ -36,7 +36,7 @@ Once human handoff is needed because the user still cannot decide after guidance
 
 ## Optional Issue comment
 
-Offer an Issue comment when human input is needed or explicitly requested and an existing Issue is available. Use supported GitHub tooling; `gh` is not required when equivalent tools exist.
+Before offering an Issue comment for needed or requested human input, check that the existing Issue itself contains enough task context for another person to understand and answer the question. If it is title-only or lacks essential context, keep the handoff pending and report what is missing; do not modify the Issue. Use supported GitHub tooling; `gh` is not required when equivalent tools exist.
 
 1. Resolve and verify the repository and intended Issue from established context. Use the active child Issue for child-specific blockers, otherwise the relevant current Issue. Read relevant existing comments to check for an answer or prior escalation.
 2. If human input is still required or requested and no equivalent request exists, preview the complete concise handoff comment and exact target Issue. Obtain explicit approval for that preview before posting; phase authorization or approval of a recommendation is not comment approval. If the preview or target changes, obtain approval again.
