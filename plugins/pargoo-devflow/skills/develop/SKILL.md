@@ -46,17 +46,17 @@ When the user cannot answer, needs decision guidance, requests another person's 
 
 If unavailable, offer basic guidance or a manual handoff draft without reproducing the helper's GitHub escalation workflow. Its absence does not block ordinary DevFlow execution.
 
-Preserve the current phase, Issue and parent/child context, interrupted step, established decisions, authorization, and Review Cycle state/count. Apply the result without repeating the investigation. Keep unresolved decisions open and pause only dependent actions; continue independent, authorized work where safe and resume the interrupted step when its required decision is resolved.
+Preserve the current phase, Issue and parent/child context, interrupted step, established decisions, authorization, and Review Cycle state/count. Apply the result without repeating the investigation. Finish handling the current question before resuming the interrupted workflow, including the next `grilling` question. If unresolved, establish whether the user wants to pause or continue independent, authorized work where safe; reuse an explicit choice already obtained by `get-help`. Keep unresolved decisions open and dependent actions blocked until the necessary decision is resolved.
 
-Helper Issue comments require separate preview approval; phase authorization is insufficient. Handle review questions only after results return to the orchestrator; the reviewer remains read-only and must not publish, modify files, or delegate to the helper.
+Preserve pending human handoffs throughout the workflow. Whenever a suitable Issue becomes available, prioritize having `get-help`, when available, offer publication through its existing comment procedure before resuming, including separate preview approval and returning the verified comment URL after posting; phase authorization is insufficient. Do not reopen the underlying decision or seek another recommendation before offering publication. Without an Issue, preserve the unresolved question and handoff draft in conversation context until a suitable Issue becomes available and explain that nothing has been published. Do not create an Issue solely to publish the handoff. Keep the question unresolved until the required human decision is received; neither Issue creation nor handoff publication resolves it.
 
-## Entry Without an Issue
+Handle review questions only after results return to the orchestrator; the reviewer remains read-only and must not publish, modify files, or delegate to the helper.
 
-Reuse an issue supplied earlier in the conversation or returned by verified creation. If none is known, ask: "Would you like to plan a new issue, or provide an existing one?" Wait for the answer; do not search repository issues for likely matches.
+## Issue Context at Entry
 
-If the user chooses an existing issue, wait for its reference. If they choose a new issue, resolve the target repository from supplied context and the checkout; ask when ambiguous. Follow the planning route below using the task and confirmed conversation decisions. The choice to plan a new issue does not approve tracker writes or implementation.
+Reuse an issue supplied earlier in the conversation or returned by verified creation. After reconstructing available state, if none is known, ask whether an issue already exists for this task and request its reference if so. Wait for an unambiguous answer; do not search repository issues for likely matches or interpret a generic acknowledgment as a choice.
 
-For a task with clear requirements, recommend refinement directly; an issue still needs to be created even if the task is implementation-ready. Delegate creation to `refine-issue-plan`, which previews the complete issue for approval. After verified creation, use the returned issue URL and the established delivery route.
+This question only discovers existing context; it does not initiate issue creation. If no issue exists, continue with the task and select the appropriate phase based on requirements. Issue creation belongs to authorized `refine-issue-plan` after any needed clarification.
 
 ## Reconstruct State
 
@@ -79,8 +79,8 @@ Ask for missing facts only when the issue, parent relationship, intended base, o
 
 Use the first matching state:
 
-1. **Needs discovery**: the issue has only a rough idea, links, or materially incomplete requirements.
-2. **Needs refinement**: grilling is complete but the parent issue has not received its implementation brief or split decision.
+1. **Needs discovery**: the task or issue has only a rough idea, links, or materially incomplete requirements.
+2. **Needs refinement**: requirements are sufficiently clear, but no issue exists or the existing issue still needs its implementation brief or split decision.
 3. **Ready to implement**: the current issue has an adequate brief and testable acceptance criteria, with no implementation yet complete.
 4. **Implementation in progress**: code is incomplete, has known failures, or has blocking review feedback.
 5. **Ready to report**: implementation appears complete and every acceptance criterion has credible evidence, but `report-implementation` has not successfully completed for this issue.

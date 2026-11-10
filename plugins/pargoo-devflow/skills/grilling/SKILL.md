@@ -67,6 +67,6 @@ After each answer or factual investigation, update the tree and evaluate in orde
 
 If the user corrects the summary, update the tree and continue as needed, one question at a time. Keep the summary focused on agreed understanding: do not automatically add unexplored optional topics, a warning, backlog, or suggestion to switch modes.
 
-Final confirmation checks the shared understanding; do not frame it as another recommended business decision.
+Final confirmation checks the shared understanding; do not frame it as another recommended business decision. General approval of the requirements summary does not confirm a previously unresolved question or recommendation. Keep it explicitly identified as unresolved unless the user explicitly accepts that specific decision.
 
 Do not implement the plan before confirmation. When invoked by another workflow, return the confirmed understanding to that workflow; confirmation here does not authorize implementation or its next phase.

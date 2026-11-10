@@ -17,7 +17,7 @@ Help the user move past an unanswered question without inventing a decision or r
 - Identify the actual unanswered question, why it matters, and which work depends on it. Reuse established decisions and inspect relevant supplied information, project conventions, documentation, and available evidence before asking for discoverable facts.
 - Separate facts from choices requiring judgment or authority. Evaluate whether a choice can responsibly be made, rather than its technical difficulty; use neither numeric confidence scores nor rigid difficulty categories.
 - Explain the question and practical options in accessible language. Recommend an approach when evidence supports it, stating material assumptions and trade-offs. Resolve routine technical choices from evidence and project conventions where authorized.
-- A recommendation is not an accepted business decision. If the user accepts a recommendation within their authority, record the confirmed decision; otherwise keep it unresolved when essential evidence or human approval is missing. Identify a decision owner only when supported by context; do not invent people, roles, assignments, or authority.
+- An explanation or recommendation is not an accepted business decision. For a choice within the user's authority, explicitly ask whether they accept that specific recommendation or prefer another option. Record it as confirmed only after explicit acceptance of that choice or selection of an alternative. Until explicitly confirmed, keep the decision unresolved. If the user still cannot decide, keep the question unresolved and use the human handoff procedure below. Identify a decision owner only when supported by context; do not invent people, roles, assignments, or authority.
 - When input is needed, ask for the specific missing information or decision from the appropriate person rather than repeating the original question. Preserve the open question in the conversation or relevant existing artifacts. Continue only independent, authorized work where safe; resume dependent work only when the necessary decision is resolved.
 
 ## Human handoff
@@ -31,6 +31,8 @@ When another person's input is required or explicitly requested, prepare a conci
 - **Impact:** What is blocked and what can continue independently.
 
 Exclude unnecessary history, private reasoning, speculative claims, and unrelated sensitive data. A draft does not mean anyone was notified. Do not contact people or invent assignments through this handoff.
+
+Once human handoff is needed because the user still cannot decide after guidance, stop trying to resolve that question through further recommendations to the user. Preserve the unresolved question and pending handoff; reopen the decision with the user only at their explicit request. Generic acknowledgments, agreement to continue independent work, summary approval, or reopening alone do not resolve the question or cancel the handoff. Preparing or publishing the handoff does not resolve the question.
 
 ## Optional Issue comment
 
@@ -51,4 +53,4 @@ This operation permits only the separately approved comment. Do not change Issue
 
 Give a short, understandable result containing the question, established facts or recommendation, any confirmed decision, remaining human decision and known owner, handoff/publication status, verified Issue/comment links when available, blocked and independent work, and the immediate next action. Use conversation context and existing artifacts without custom state files or complex schemas.
 
-Return control with unresolved questions intact. Resolving a question does not grant authorization for another workflow phase or turn failed or blocked verification into a pass.
+Before returning control, clearly state whether the question is resolved or unresolved and what will happen with any handoff. If unresolved, keep it open and explicitly establish whether the user wants to pause or continue independent work. Do not advance to another question or task until that choice is clear. Resolving a question does not grant authorization for another workflow phase or turn failed or blocked verification into a pass.
