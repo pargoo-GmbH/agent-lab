@@ -1,0 +1,4 @@
+interface:
+  display_name: "Assess Implementation"
+  short_description: "Assess agent or developer implementation"
+  default_prompt: "Use $assess-implementation to inspect this planned task and return a read-only assessment of whether implementation should be Agent-led or Developer-led."

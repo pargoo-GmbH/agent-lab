@@ -20,10 +20,11 @@ Resolve skills by name from the skills available in the current session, regardl
 
 - `grilling` for requirements interrogation
 - `refine-issue-plan` for the one-time planning decision, new issue creation, and any subissue creation
+- `assess-implementation` for the read-only pre-implementation assessment and implementation responsibility decision
 - `report-implementation` for the final acceptance-criteria, review, and verification gate for the current issue
 - `creating-pull-requests` for PR preparation, approval, push, creation, and base routing
 
-Before delegating any workflow phase, confirm all four direct dependencies are available. If any are missing, stop and name them. Do not improvise a replacement workflow or assume a filesystem path.
+Before delegating any workflow phase or assessment, confirm all five direct dependencies are available. If any are missing, stop and name them. Do not improvise a replacement workflow or assume a filesystem path.
 
 Do not call `split-issue-into-subissues` directly; `refine-issue-plan` owns that decision and dependency. Do not call `review-implementation` separately; `report-implementation` owns the review gate, invokes that skill at most once when available, and returns BLOCKED if the independent-review dependency is unavailable. Each reporting attempt delegates review once; only this orchestrator controls re-entry after corrections.
 
@@ -100,17 +101,31 @@ Recommend a `grilling` phase and wait. After authorization, delegate the session
 
 ### Adequately planned issue
 
-If the issue already contains a clear implementation brief, scope, constraints, and testable acceptance criteria, do not rerun grilling or refinement. Recommend implementation directly.
+If the issue already contains a clear implementation brief, scope, constraints, and testable acceptance criteria, do not rerun grilling or refinement. Apply Pre-implementation Assessment before recommending implementation.
 
 ### Refinement
 
-Run `refine-issue-plan` only once for the task or parent issue. Let it decide whether the work remains one issue or is split and own approved issue creation. Without an existing issue, require a verified issue URL before leaving refinement. After refinement finishes, recommend implementation and pause until the user explicitly says to implement or confirms that phase.
+Run `refine-issue-plan` only once for the task or parent issue. Let it decide whether the work remains one issue or is split and own approved issue creation. Without an existing issue, require a verified issue URL before leaving refinement. After refinement finishes, apply Pre-implementation Assessment for a standalone issue or follow child selection in Split Issue Route. Recommend implementation only after an Agent-led result, then wait for implementation authorization.
 
 Never rerun parent refinement merely because the workflow resumed or moved to a child issue.
 
+## Pre-implementation Assessment
+
+Before recommending implementation or starting/resuming branch setup or implementation edits, require an applicable Agent-led result from `assess-implementation`. This also applies to direct implementation requests. Run it automatically as a read-only transition check, without a separate phase authorization prompt. Do not run it while requirements still need discovery/refinement or merely to continue unchanged reporting, review, PR preparation, or merge tracking.
+
+Pass the exact standalone or selected child Issue, implementable scope, relevant parent/dependency context, established constraints, and available repository/verification evidence. Let the skill own all assessment criteria and reasoning. Assess the selected child rather than automatically assessing the whole parent; retain shared risks relevant to that child.
+
+Recover any previous assessment and its scope/evidence from conversation context. Reuse it only when available and clearly applicable to the current scope and relevant evidence. Otherwise reassess before implementation continues, including on resume. Material scope changes, meaningful new evidence, or changed safeguards require reassessment before proposing or implementing the changed scope. Do not rerun an unchanged assessment to seek a different result, and do not create persistent assessment state, tracker comments, or other artifacts.
+
+- **Agent-led:** Present the concise assessment and recommend implementation under the existing authorization rules. If implementation was already explicitly authorized for this scope, proceed without requesting that authorization again; the assessment itself grants none.
+- **Developer-led:** Present the assessment and concrete reasons, recommend implementation by a human developer, and do not offer or start autonomous implementation for that scope. A generic `OK`, `continue`, or direct implementation request cannot bypass this result for unchanged scope/evidence. Do not automatically launch `get-help`, publish a comment, assign anyone, or start a developer-approval workflow.
+- **Missing prerequisites:** Preserve discovery/refinement behavior, identify the specific blocker, and reassess once resolved. Do not declare the scope implementation-ready or infer Agent-led from missing information.
+
+For review corrections, reuse the assessment for routine in-scope fixes. Reassess only when the proposed correction materially changes the assessed scope or introduces relevant new risks, before making that correction. Preserve the active Review Cycle and completed attempt count; reassessment neither resets the counter nor expands correction authorization. If the result prevents a required correction, stop the cycle under its existing stop rules.
+
 ## Implementation Authorization
 
-An explicit `implement` instruction or confirmation of a clearly proposed implementation phase authorizes:
+Subject to Pre-implementation Assessment, an explicit `implement` instruction or confirmation of a clearly proposed implementation phase authorizes:
 
 - selecting or reusing the correct implementation branch;
 - creating the required remote branch and linking it to the issue when no suitable branch exists;
@@ -198,7 +213,7 @@ On resume, distinguish an active cycle from completed or stopped history. Recove
 
 ## Standalone Issue Route
 
-Follow this sequence, with a separate authorization before every arrow:
+Follow this sequence, with a separate authorization before every arrow. Apply Pre-implementation Assessment before recommending or starting implementation; the assessment is not a separately authorized phase:
 
 `planning complete` -> `implementation` -> `report-implementation` -> `creating-pull-requests` -> `manual review and merge` -> `completion check`
 
@@ -214,13 +229,13 @@ For each child:
 
 1. Reconstruct parent, child, branch, dependency, and PR state.
 2. Select the next unblocked child by dependency order, foundational value, and risk reduction.
-3. Recommend that child and wait; allow the user to override the order.
+3. Apply Pre-implementation Assessment for the selected child before recommending its implementation. With Agent-led, recommend that child and wait for implementation authorization; allow the user to override the order, assessing the newly selected child before recommending or starting it.
 4. Apply Issue branch setup for that child, linking any new child branch to the child issue and basing it on the parent integration branch; then implement it.
 5. After all child acceptance criteria appear satisfied, recommend and then delegate one `report-implementation` gate for that child.
 6. After successful reporting, recommend and then delegate `creating-pull-requests`, explicitly supplying the parent integration branch as the base.
 7. Wait for manual review and merge into the parent integration branch.
 
-After a child PR merges, reconstruct state and recommend the next unblocked child. Do not rerun parent refinement.
+After a child PR merges, reconstruct state and select the next unblocked child through the same assessment and authorization steps. Do not rerun parent refinement.
 
 After all required child PRs merge:
 
@@ -235,7 +250,7 @@ After all required child PRs merge:
 
 Before issue creation, recover planning choices and confirmed requirements from the conversation. Once an issue is created, reuse its URL. If creation failed or its outcome is uncertain, resolve that outcome through `refine-issue-plan` before retrying or recommending implementation.
 
-Before resuming implementation edits, reconstruct branch and PR relationships and apply Issue branch setup, preserving any still-applicable explicit branch choice.
+Before resuming implementation edits, reconstruct branch and PR relationships, apply Pre-implementation Assessment (reusing only a recoverable, clearly applicable result), then apply Issue branch setup, preserving any still-applicable explicit branch choice.
 
 Interpret `continue`, `what is next?`, or an equivalent request as authorization to reconstruct state and recommend one next phase, not to execute multiple phases automatically. Preserve a previously authorized, recoverable **active** Review Cycle and its bounded corrections; do not request another OK merely for its remaining automatic attempts. Completed and stopped cycles remain history; do not resume them or automatically restart them.
 
