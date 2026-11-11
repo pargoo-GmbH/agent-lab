@@ -20,7 +20,7 @@ Resolve skills by name from the skills available in the current session, regardl
 
 - `grilling` for requirements interrogation
 - `refine-issue-plan` for the one-time planning decision, new issue creation, and any subissue creation
-- `assess-implementation` for the read-only pre-implementation assessment and implementation responsibility decision
+- `who-should-do-it` for the read-only pre-implementation assessment and implementation responsibility decision
 - `report-implementation` for the final acceptance-criteria, review, and verification gate for the current issue
 - `creating-pull-requests` for PR preparation, approval, push, creation, and base routing
 
@@ -111,13 +111,13 @@ Never rerun parent refinement merely because the workflow resumed or moved to a 
 
 ## Pre-implementation Assessment
 
-Before recommending implementation or starting/resuming branch setup or implementation edits, require an applicable result from `assess-implementation`. Agent implementation requires Agent-led or a confirmed Explicit Risk Override for the current Developer-led scope. This also applies to direct implementation requests. Run the assessment automatically as a read-only transition check, without a separate phase authorization prompt. Do not run it while requirements still need discovery/refinement or merely to continue unchanged reporting, review, PR preparation, or merge tracking.
+Before recommending implementation or starting/resuming branch setup or implementation edits, require an applicable result from `who-should-do-it`. Agent implementation requires Agent-led or a confirmed Explicit Risk Override for the current Developer-led scope. This also applies to direct implementation requests. Run the assessment automatically as a read-only transition check, without a separate phase authorization prompt. Do not run it while requirements still need discovery/refinement or merely to continue unchanged reporting, review, PR preparation, or merge tracking.
 
 Pass the exact standalone or selected child Issue, implementable scope, relevant parent/dependency context, established constraints, and available repository/verification evidence. Let the skill own all assessment criteria and reasoning. Assess the selected child rather than automatically assessing the whole parent; retain shared risks relevant to that child.
 
 Recover any previous assessment and its scope/evidence from conversation context. Reuse it only when available and clearly applicable to the current scope and relevant evidence. Otherwise reassess before implementation continues, including on resume. Material scope changes, meaningful new evidence, or changed safeguards require reassessment before proposing or implementing the changed scope. Do not rerun an unchanged assessment to seek a different result, and do not create persistent assessment state, tracker comments, or other artifacts.
 
-Present each completed assessment, including a reused result on resume, as a distinct section preserving the structure defined by `assess-implementation`. Do not flatten its table into prose or merge it with workflow recommendations or authorization questions. Keep those separate after the assessment, with the next workflow action in the existing status footer rather than inside the assessment.
+Present each completed assessment, including a reused result on resume, as a distinct section preserving the structure defined by `who-should-do-it`. Do not flatten its table into prose or merge it with workflow recommendations or authorization questions. Keep those separate after the assessment, with the next workflow action in the existing status footer rather than inside the assessment.
 
 - **Agent-led:** Recommend implementation under the existing authorization rules. If implementation was already explicitly authorized for this scope, proceed without requesting that authorization again; the assessment itself grants none.
 - **Developer-led:** Recommend implementation by a human developer and block agent implementation by default. Do not proactively suggest or advertise an override. If the user wants agent implementation despite this recommendation, follow Explicit Risk Override below. Do not automatically launch `get-help`, publish a comment, assign anyone, or start a developer-approval workflow.

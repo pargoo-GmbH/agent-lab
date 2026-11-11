@@ -1,12 +1,12 @@
 ---
-name: assess-implementation
+name: who-should-do-it
 description: Assess whether a defined development task should be implemented by an AI agent or a human developer, using implementation complexity, execution risk, and controllability. Use before recommending or starting implementation, or when material scope or risk evidence changes; return a read-only Agent-led or Developer-led assessment, or identify missing prerequisites.
 metadata:
   author: "pargoo GmbH"
   website: "https://www.pargoo.com/"
 ---
 
-# Assess Implementation
+# Who Should Do It?
 
 *Built by the team at [pargoo](https://www.pargoo.com/).*
 
