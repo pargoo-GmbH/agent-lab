@@ -60,6 +60,7 @@ npx skills add pargoo-GmbH/agent-lab --skill building-components
 Available standalone skills:
 
 - `building-components`
+- `init-ghp-labels`
 - `organizing-classnames`
 
 **Install skills from the Plugin independently:**
