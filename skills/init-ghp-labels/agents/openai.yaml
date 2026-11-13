@@ -1,0 +1,4 @@
+interface:
+  display_name: "Initialize GitHub Labels"
+  short_description: "Safely install a reusable GitHub label set"
+  default_prompt: "Use $init-ghp-labels to preview and initialize the standard labels for my GitHub repository."
