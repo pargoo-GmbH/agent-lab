@@ -18,7 +18,7 @@ Manage Strapi content through your agent, with a panel for projects, environment
 
 A plugin for AI-assisted software development, from a task description or GitHub Issue to Pull Request.
 
-GitHub CLI (gh) is recommended for full GitHub workflow support; otherwise equivalent GitHub tooling is required.
+GitHub CLI (gh) is recommended for full GitHub workflow support; otherwise equivalent GitHub tooling is required. The `track-code-review-status` skill uses the connected GitHub app to read GitHub Checks.
 
 **Included skills:**
 
@@ -31,6 +31,7 @@ GitHub CLI (gh) is recommended for full GitHub workflow support; otherwise equiv
 - `report-implementation`
 - `review-implementation`
 - `creating-pull-requests`
+- `track-code-review-status`
 
 #### Install Plugin (Codex)
 

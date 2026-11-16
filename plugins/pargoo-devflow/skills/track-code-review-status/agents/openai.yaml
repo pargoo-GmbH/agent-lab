@@ -1,0 +1,4 @@
+interface:
+  display_name: "Track Code Review Status"
+  short_description: "Track Pargoosh review status through GitHub Checks"
+  default_prompt: "Use $track-code-review-status to monitor the open pull request's Pargoosh check and report the terminal result."
