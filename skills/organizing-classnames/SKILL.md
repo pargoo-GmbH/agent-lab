@@ -1,6 +1,6 @@
 ---
 name: organizing-classnames
-description: Organizes class-name composition and ordering using project conventions in React components. Use this skill whenever writing or reviewing component className props, applying utility classes or locally scoped styles, using class-name composition utilities, organizing responsive styles, or writing conditional class expressions.
+description: Organizes classNames usage and class ordering using project conventions in React components. Use this skill whenever writing or reviewing component className props with the classnames package, applying utility classes or locally scoped styles, organizing responsive styles, or writing conditional class expressions.
 metadata:
   author: "pargoo GmbH"
   website: "https://www.pargoo.com/"
@@ -10,11 +10,11 @@ metadata:
 
 *Built by the team at [pargoo](https://www.pargoo.com/).*
 
-Inspect the project's styling setup, documentation, and instructions first. Apply these composition patterns with its existing classes and composition utility, without adding dependencies. Tailwind syntax in the examples is illustrative; use the project's actual styling and responsive conventions with any approach, including combinations of utility classes and locally scoped styles.
+Inspect the project's styling setup, documentation, and instructions first. Apply these classNames patterns with its existing classes. Tailwind syntax in the examples is illustrative; use the project's actual styling and responsive conventions with any approach, including combinations of utility classes and locally scoped styles.
 
 ## 1. Import and Component Props Pattern
 
-- Use the project's existing composition utility; examples use `classNames` from `'classnames'`
+- Import `classNames` from `'classnames'` alongside other third-party imports
 - The `className` prop must be optional: `className?: string`
 - Merge the consumer's `className` **last** (CSS precedence still determines which styles win):
 
@@ -187,7 +187,7 @@ export const Actions: React.FC = () => {
 
 ## 5. Quick Checklist
 
-- [ ] Project's existing styling and composition utility used
+- [ ] `classNames` imported from `'classnames'` and project styling conventions followed
 - [ ] `className?: string` prop is optional
 - [ ] Consumer `className` merged at the **end**
 - [ ] Responsive styles follow the project's conventions and configured breakpoints

@@ -1,4 +1,4 @@
 interface:
   display_name: "Organizing Classnames"
-  short_description: "Organize class-name composition using project conventions"
-  default_prompt: "Use $organizing-classnames to review and organize these React className props using the project's styling and class-name composition conventions."
+  short_description: "Organize classNames usage and class ordering"
+  default_prompt: "Use $organizing-classnames to review and organize these React className props using classNames and the project's styling conventions."
