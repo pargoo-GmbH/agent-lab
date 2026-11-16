@@ -26,7 +26,7 @@ Component Progress:
 
 **Step 1: Determine placement**
 
-Infer from context if possible, otherwise ask the user. 
+Infer from context if possible, otherwise ask the user.
 See [references/placement.md](references/placement.md) for paths and conventions for each type:
 
 - Shared (common) component
@@ -42,7 +42,7 @@ If the task adds or extracts a custom hook, decide its ownership before creating
 
 **Step 2: Create folder structure**
 
-Create a kebab-case folder in the appropriate location. 
+Create a kebab-case folder in the appropriate location.
 See [references/folder-structures.md](references/folder-structures.md) for diagrams of each scenario.
 
 **Step 3: Create component file**

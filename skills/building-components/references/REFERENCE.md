@@ -22,7 +22,7 @@ export const Button: React.FC<Props> = ({ title, onClick }) => (
 ```
 
 Never use default exports in components.
-For App Router page files, the page component is default-exported. Example:
+For App Router and Pages Router page files, the page component is default-exported. App Router example:
 
 ```tsx
 const AboutPage: React.FC<Props> = async ({ params }) => {

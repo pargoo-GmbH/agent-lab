@@ -31,10 +31,12 @@ Nesting can go 5-6 levels deep following this same pattern at every level.
 
 ## Page component
 
-Page components live in `src/app/` and render a main component from `src/components/[page-name]/`.
+Inspect existing routes to identify the router and avoid duplicates before creating a page. Page components render a main component from `src/components/[page-name]/`.
 
-**With i18n:** `src/app/[locale]/[route-name]/page.tsx`
-**Without i18n:** `src/app/[route-name]/page.tsx`
+- **App Router:** `src/app/[route-name]/page.tsx` (or `src/app/[locale]/[route-name]/page.tsx` when appropriate)
+- **Pages Router:** `src/pages/[route-name].tsx`
+
+Use the project's existing route directory (`app/`, `pages/`, `src/app/`, or `src/pages/`). Follow the router's filename and export requirements for page files.
 
 The page file default exports `[RouteNamePage]`. When the team prefers arrow functions, define the page component as a local `const` and then `export default [RouteNamePage]`. Keep logic out of page files; delegate rendering to `src/components/[page-name]/[PageName].tsx`.
 

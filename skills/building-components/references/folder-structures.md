@@ -36,13 +36,24 @@ src/components/home/
                 └── FeatureCard.tsx
 ```
 
-## Page component
+## Page component (App Router example)
 
 ```
 src/
 ├── app/
 │   └── about-us/
 │       └── page.tsx                  ← exports AboutUsPage
+└── components/
+    └── about-us/
+        └── AboutUs.tsx               ← main page component
+```
+
+## Page component (Pages Router example)
+
+```
+src/
+├── pages/
+│   └── about-us.tsx                  ← exports AboutUsPage
 └── components/
     └── about-us/
         └── AboutUs.tsx               ← main page component

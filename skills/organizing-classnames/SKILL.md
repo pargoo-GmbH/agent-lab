@@ -1,6 +1,6 @@
 ---
 name: organizing-classnames
-description: Enforces classNames package usage patterns and Tailwind CSS class ordering conventions in React components. Use this skill whenever writing or reviewing component className props, applying Tailwind classes, using the classnames package, organizing breakpoint-specific styles, writing conditional class expressions, or when the user asks about CSS class ordering, mobile-first responsive patterns, or how to handle className props in components.
+description: Organizes class-name composition and ordering using project conventions in React components. Use this skill whenever writing or reviewing component className props, applying utility classes or locally scoped styles, using class-name composition utilities, organizing responsive styles, or writing conditional class expressions.
 metadata:
   author: "pargoo GmbH"
   website: "https://www.pargoo.com/"
@@ -10,11 +10,13 @@ metadata:
 
 *Built by the team at [pargoo](https://www.pargoo.com/).*
 
+Inspect the project's styling setup, documentation, and instructions first. Apply these composition patterns with its existing classes and composition utility, without adding dependencies. Tailwind syntax in the examples is illustrative; use the project's actual styling and responsive conventions with any approach, including combinations of utility classes and locally scoped styles.
+
 ## 1. Import and Component Props Pattern
 
-- Import `classNames` from `'classnames'` alongside other third-party imports
+- Use the project's existing composition utility; examples use `classNames` from `'classnames'`
 - The `className` prop must be optional: `className?: string`
-- Always merge the consumer's `className` **last** so it can override defaults:
+- Merge the consumer's `className` **last** (CSS precedence still determines which styles win):
 
 ```tsx
 className={classNames('default-classes', className)}
@@ -22,17 +24,17 @@ className={classNames('default-classes', className)}
 
 ## 2. Breakpoint Order (Mobile-First)
 
-Order classes from smallest to largest screen size — always:
+For mobile-first responsive utilities, order the project's breakpoints from smallest to largest. Tailwind-style example:
 
 ```
 base (no prefix) → xs: → s: → sm: → md: → m: → lg: → xl: → 2xl:
 ```
 
-> Check the project's `tailwind.config` for the actual breakpoint names — they may differ.
+> Use the project's actual responsive configuration. Inspect Tailwind configuration only in Tailwind projects.
 
 ## 3. Class Organization Rules
 
-- **Group by breakpoint** — each breakpoint gets its own string argument
+- **Group responsive utilities by breakpoint** — each breakpoint gets its own string argument when applicable
 - **Order utilities logically** within each group: layout → spacing → typography → colors → effects
 - **No trailing comma** after the last `classNames` argument
 - Breakpoint grouping controls the arguments inside `classNames`; it does not by itself justify extracting the result into a variable
@@ -185,11 +187,11 @@ export const Actions: React.FC = () => {
 
 ## 5. Quick Checklist
 
-- [ ] `classNames` imported from `'classnames'`
+- [ ] Project's existing styling and composition utility used
 - [ ] `className?: string` prop is optional
 - [ ] Consumer `className` merged at the **end**
-- [ ] Breakpoints ordered mobile-first (base → xs → sm → md → lg → xl → 2xl)
-- [ ] Each breakpoint in its own string argument
+- [ ] Responsive styles follow the project's conventions and configured breakpoints
+- [ ] Responsive utilities grouped by breakpoint when applicable
 - [ ] Utilities ordered: layout → spacing → typography → colors → effects
 - [ ] No trailing comma after last argument
 - [ ] One-use class sets kept inline with their element
