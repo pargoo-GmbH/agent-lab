@@ -173,7 +173,7 @@ Before implementation edits on start or resume:
 3. **Protect uncommitted work.** Before switching with uncommitted changes, show the affected files and target branch and ask how to proceed. Do not automatically stash, commit, discard, or carry changes across branches. Changes on the selected branch alone need no branch-choice question.
 4. **Create only when needed.** If no suitable branch or explicit alternative exists, create and link one during authorized implementation. Follow repository and agent naming conventions and resolve local or remote name collisions before creation.
 
-Create standalone and parent integration branches from the latest remote default branch, and child branches from the latest remote verified parent integration branch. Link each new branch to its own issue. Reusing a branch does not authorize rebasing or resetting it.
+Create standalone and parent integration branches from the latest remote default branch, and child branches from the latest remote verified parent integration branch. Link each new branch to its own issue. The starting point determines ancestry, not upstream tracking. Reusing a branch does not authorize rebasing or resetting it.
 
 Use supported GitHub tooling. [gh issue develop](https://cli.github.com/manual/gh_issue_develop) lists direct links and creates linked branches; also inspect associated PRs during discovery:
 
@@ -189,7 +189,19 @@ Resolve these values before execution; use `--branch-repo` when the branch repos
 
 Link an existing alternative branch only when explicitly requested, using supported GitHub functionality such as the issue's [Development section](https://github.blog/changelog/2022-09-07-link-existing-branches-to-an-issue/), with applicable approval. Publishing a local-only branch still requires separate authorization. Do not recreate a branch or open a PR just to obtain a link; if available tooling cannot link it, explain the limitation.
 
-Before editing, verify the selected checkout and, for GitHub-associated branches, the remote ref and issue association directly or through the verified PR head. For new branches, also verify the direct issue link and starting commit against the resolved remote base. Explicit local alternatives may remain unlinked.
+Before editing on start or resume, verify the selected checkout and, for GitHub-associated branches, the remote ref and issue association directly or through the verified PR head. For new branches, also verify the direct issue link and starting commit against the resolved remote base. Explicit local alternatives may remain unlinked.
+
+After every working branch selection or checkout, verify its actual upstream before implementation begins or resumes. Apply this to new, reused, Issue-linked, PR-discovered, and explicitly selected branches, including standalone, parent integration, and child branches, regardless of the tool or automatic Git tracking settings used.
+
+Resolve the intended branch repository from verified user, Issue, PR-head, and Git context; it may differ from the Issue repository. Verify the Git remote's repository identity rather than assuming `origin` or accepting a matching branch name. Inspect the configured upstream remote and branch even when the upstream cannot resolve, and check live remote branch information rather than relying only on cached remote-tracking refs.
+
+- An unpublished local-only branch has no upstream; do not publish it to satisfy this check.
+- A published branch, including one created by the authorized Issue workflow, tracks its same-named remote branch in the intended repository. A published branch without upstream needs repair.
+- Tracking a different branch, including the default, parent integration, or another feature branch, or the same name in the wrong repository, is unsafe. A missing or stale upstream target requires investigation before choosing a correction.
+
+When the intended state is unambiguous and permitted, repair local tracking and verify the result: remove an incorrect upstream for a local-only branch, or associate a published branch with its verified existing same-named counterpart. Tracking repair grants no permission to create remote branches, publish commits, modify remote history, or perform unrelated GitHub writes. The initial Issue-branch creation authorization above remains separate.
+
+If repository identity, multiple plausible remotes, the correction, or permission remains unresolved, stop before implementation edits or a successful handoff. Report the current branch/upstream, the mismatch and its consequences, and the decision or authorization needed. Do not claim branch setup succeeded while tracking remains unsafe or unverified.
 
 After a failed or uncertain setup, inspect remote refs, issue/PR relationships, and the checkout before retrying. Reuse successful results; stop before edits if the required state cannot be verified.
 

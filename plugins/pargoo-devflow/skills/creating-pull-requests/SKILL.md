@@ -53,6 +53,12 @@ Do not infer a release merely because a release branch exists or is configured a
 
 If the correct base is unclear, ask before finalizing.
 
+Resolve publication separately from the PR base: identify the selected local source branch and commit, current upstream (or `none`), intended destination repository/remote, same-named destination branch, and whether a push is needed. Use verified user, Issue, PR-head, and Git evidence; the Issue, head, and base repositories may differ. Do not derive the destination solely from upstream, a branch name, `origin`, or implicit push defaults.
+
+Verify the remote's effective push repository, including push URLs or URL rewrites when applicable, and its relationship to the intended branch repository. Inspect any tool settings that could redirect or broaden the proposed push. Stop for unresolved identity or destination ambiguity. For ordinary feature publication, target the same-named feature branch; a default or parent integration PR base is not its push destination. Preserve explicitly requested release head/base conventions.
+
+Before an approval-ready preview, verify safe tracking for the selected local feature branch: an unpublished branch has no upstream; a published branch tracks its verified same-named branch in the intended repository. Correct or remove unsafe tracking only when unambiguous and locally authorized, then verify. Otherwise stop with the current state, consequence, and required decision. Never push or create a remote branch to repair tracking. This independent PR safety check leaves primary branch preparation in `develop`.
+
 Common commands:
 
 ```bash
@@ -109,7 +115,11 @@ Before any push or PR creation, show:
 
 - proposed PR title
 - proposed PR body
-- target base branch
+- local source branch and commit
+- current upstream, or `none`
+- push destination repository/remote and branch
+- planned publication (push needed or already published)
+- separate PR base branch
 - linked issue and closing references
 
 Use the preview template from [references/TEMPLATES.md](references/TEMPLATES.md), then stop and wait for approval.
@@ -118,14 +128,23 @@ Use the preview template from [references/TEMPLATES.md](references/TEMPLATES.md)
 
 After approval:
 
-- push the branch if needed
-- create the PR with the approved title and body
+- Immediately before execution, recheck the actual selected source branch/commit, effective destination repository, and destination branch against the approved operation. Stop on unresolved mismatches; obtain renewed approval for material changes to the source, destination, or operation.
+- If needed, push using an explicit verified source-to-destination mapping supported by the available tool. For ordinary feature branches, map the selected local branch to its same-named branch in the intended repository, independently of upstream or implicit push defaults. Do not include unapproved refs or history rewrites.
+- Verify that the live intended remote branch's head SHA equals the approved source commit SHA, and that the local branch tracks that same-named branch in the correct repository. Repair local tracking only when unambiguous and permitted. Apply these checks even if no push was needed.
+- If the remote head differs, investigate and re-evaluate the actual PR diff; obtain renewed approval for material changes. Commit containment alone is insufficient. Report publication or tracking verification failures and stop before PR creation until the remote head and changes are verified against approval, rather than claiming publication succeeded.
+- Create the PR with the approved title, body, head repository/branch, and separate base. Do not change the PR base to match the push destination.
 
-Use GitHub tooling when available.
+Use GitHub tooling when available. For example, after verifying the source, remote's effective push destination, and operation, Git CLI can publish with an explicit refspec and set tracking:
+
+```bash
+git push --set-upstream "$remote" "refs/heads/$branch:refs/heads/$branch"
+```
+
+Other supported tools must achieve the same verified result; this example is not a required mechanism.
 
 If PR creation succeeds, use the success response template from [references/TEMPLATES.md](references/TEMPLATES.md).
 
-If automatic PR creation is blocked because of missing CLI, invalid auth, sandbox/network restrictions, or unavailable repo tooling, do not stop with an error. Use the fallback response template from [references/TEMPLATES.md](references/TEMPLATES.md), and provide the host-specific PR-creation URL or enough details for manual creation.
+If automatic PR creation is blocked because of missing CLI, invalid auth, sandbox/network restrictions, or unavailable repo tooling, use the fallback response template from [references/TEMPLATES.md](references/TEMPLATES.md), and provide the host-specific PR-creation URL or enough details for manual creation. Distinguish tooling limitations from unresolved publication or tracking safety failures: report the latter as blockers and do not imply the branch is ready for a successful manual handoff.
 
 ## References
 
