@@ -45,7 +45,12 @@ Proposed PR title:
 Proposed PR body:
 <body>
 
-Target base branch: <base>
+Local source branch: <branch> at <commit>
+Current upstream: <remote/branch or none>
+Push destination repository/remote: <repository identity and remote>
+Push destination branch: <branch>
+Planned publication: <push needed or already published>
+PR base branch: <base>
 Linked issues: <references or N/A>
 Closing issues: <references or N/A>
 ```
