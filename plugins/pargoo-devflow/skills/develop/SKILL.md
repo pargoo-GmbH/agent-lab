@@ -274,6 +274,14 @@ After all required child PRs merge:
 5. Wait for manual review and merge.
 6. Mark complete only after the final parent PR merges into the intended default branch and the issues it is meant to close are closed.
 
+## Optional Remote Review Status
+
+After `creating-pull-requests` successfully creates a standalone, child, or final parent PR, offer to wait for the remote Pargoosh Code Review to complete within the default observation window defined by `track-code-review-status` as the next optional action. Wait for explicit user confirmation; PR creation authorization does not authorize monitoring.
+
+Resolve `track-code-review-status` by name as an optional dependency, separate from the five mandatory dependencies. Once authorized, read its `SKILL.md` completely and explicitly request waiting mode with the verified PR URL or repository and PR number, using that skill's default observation window. Use a one-time status check when the user explicitly requests it. Let that skill own checks, polling, timeouts, and result reporting; do not implement them or create cron jobs here. If the skill is unavailable or monitoring cannot complete, report the limitation without blocking the existing PR workflow. If the user declines, continue waiting for manual review and merge.
+
+Relay the returned result to the user and preserve the waiting-for-merge phase and local Review Cycle state/count. Remote review results are not local review attempts, and a completed Check Run is neither approval nor evidence that there are no findings. Status alone does not authorize evaluating review comments, code changes, push, merge, or Issue closure; preserve the existing manual review, merge, and completion checks.
+
 ## Resume Behavior
 
 Before issue creation, recover planning choices and confirmed requirements from the conversation. Once an issue is created, reuse its URL. If creation failed or its outcome is uncertain, resolve that outcome through `refine-issue-plan` before retrying or recommending implementation.
@@ -284,7 +292,7 @@ Interpret `continue`, `what is next?`, or an equivalent request as authorization
 
 When waiting for a PR merge, inspect its current state:
 
-- Open: keep waiting and report checks or review blockers when relevant.
+- Open: keep waiting and report checks or review blockers when relevant; offer Optional Remote Review Status monitoring when relevant, with explicit confirmation before delegation.
 - Merged into parent integration branch: move to next-child selection or the parent integration gate.
 - Merged into default branch: verify issue closure and completion.
 - Closed without merge, merged into the wrong base, or issue still open unexpectedly: report the discrepancy and recommend one corrective phase.
@@ -325,5 +333,7 @@ Awaiting: <specific user authorization or manual event>
 ```
 
 Show terminal counts as history until a new run is authorized, then show that run's counter separately from any earlier history. Before any run, use `Review cycle: not started` and `Review attempt: 0/3 — not started`.
+
+When offering remote monitoring, keep `Phase: Waiting for merge`, use `Next step: Wait for remote code review completion` and `Awaiting: User confirmation`, and preserve the local review fields. After monitoring returns, is declined, or is unavailable, return the next step and awaiting event to manual review and merge; an optional monitoring limitation alone is not a workflow blocker.
 
 Do not offer several equally actionable next steps. Recommend one and explain a blocker when present. During authorized automatic corrections, state the next action and `Awaiting: none`; otherwise wait for the required authorization or manual event.
