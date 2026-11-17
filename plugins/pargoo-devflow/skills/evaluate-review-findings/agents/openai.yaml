@@ -1,0 +1,4 @@
+interface:
+  display_name: "Evaluate Review Findings"
+  short_description: "Independently assess external PR review findings"
+  default_prompt: "Use $evaluate-review-findings to assess the external review findings for this pull request and recommend which corrections are warranted without changing code or GitHub state."

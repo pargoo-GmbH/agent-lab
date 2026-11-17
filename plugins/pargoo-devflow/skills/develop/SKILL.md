@@ -278,9 +278,21 @@ After all required child PRs merge:
 
 After `creating-pull-requests` successfully creates a standalone, child, or final parent PR, offer to wait for the remote Pargoosh Code Review to complete within the default observation window defined by `track-code-review-status` as the next optional action. Wait for explicit user confirmation; PR creation authorization does not authorize monitoring.
 
-Resolve `track-code-review-status` by name as an optional dependency, separate from the five mandatory dependencies. Once authorized, read its `SKILL.md` completely and explicitly request waiting mode with the verified PR URL or repository and PR number, using that skill's default observation window. Use a one-time status check when the user explicitly requests it. Let that skill own checks, polling, timeouts, and result reporting; do not implement them or create cron jobs here. If the skill is unavailable or monitoring cannot complete, report the limitation without blocking the existing PR workflow. If the user declines, continue waiting for manual review and merge.
+Resolve `track-code-review-status` by name as an optional dependency, separate from the five mandatory dependencies. Once authorized, load and follow the `track-code-review-status` skill instructions, then delegate monitoring with an explicit request for waiting mode and the verified PR URL or repository and PR number, using that skill's default observation window. Use a one-time status check when the user explicitly requests it. Let that skill own checks, polling, timeouts, and result reporting; do not implement them or create cron jobs here. If the skill is unavailable or monitoring cannot complete, report the limitation without blocking the existing PR workflow. If the user declines, continue waiting for manual review and merge.
 
 Relay the returned result to the user and preserve the waiting-for-merge phase and local Review Cycle state/count. Remote review results are not local review attempts, and a completed Check Run is neither approval nor evidence that there are no findings. Status alone does not authorize evaluating review comments, code changes, push, merge, or Issue closure; preserve the existing manual review, merge, and completion checks.
+
+After monitoring reports a completed Check Run, offer Optional Remote Review Findings Evaluation when relevant and wait for explicit authorization. Completion does not establish that review comments exist or have all been published.
+
+## Optional Remote Review Findings Evaluation
+
+Resolve `evaluate-review-findings` by name as an optional dependency, separate from the five mandatory dependencies. Require explicit user authorization before delegation; authorization to create a PR or monitor review status does not authorize evaluation. An explicit request to evaluate findings for an existing PR authorizes evaluation directly, without prior monitoring or another confirmation.
+
+Once authorized, load and follow the `evaluate-review-findings` skill instructions, then delegate with the verified PR reference, relevant existing Issue/task requirements and workflow decisions, and any supplied review/comment reference. Let the skill own retrieval and assessment; do not add comment retrieval or polling here. Apply this route to standalone, child, and final parent PRs with their verified intended bases.
+
+Keep `Phase: Waiting for merge` and preserve local Review Cycle state/count while assessing. Present the returned assessment and request the user's decision about proposed corrections; never apply fixes automatically. If the user declines evaluation, no findings are retrieved, the skill is unavailable, or assessment cannot complete, report any limitation and retain manual review and merge.
+
+Route only user-authorized code corrections through existing Implementation Authorization, applicable scope/risk assessment, verification, reporting, and review gates, and GitHub write permissions. Remote findings and their evaluation do not automatically start or re-enter the local Review Cycle; they do not count as local review attempts, change its counters, or authorize automatic corrections. Neither remote findings nor correction authorization implicitly authorize commits, pushes, or PR updates.
 
 ## Resume Behavior
 
@@ -292,7 +304,7 @@ Interpret `continue`, `what is next?`, or an equivalent request as authorization
 
 When waiting for a PR merge, inspect its current state:
 
-- Open: keep waiting and report checks or review blockers when relevant; offer Optional Remote Review Status monitoring when relevant, with explicit confirmation before delegation.
+- Open: keep waiting and report checks or review blockers when relevant; offer Optional Remote Review Status monitoring or Optional Remote Review Findings Evaluation as appropriate, with explicit authorization before delegation.
 - Merged into parent integration branch: move to next-child selection or the parent integration gate.
 - Merged into default branch: verify issue closure and completion.
 - Closed without merge, merged into the wrong base, or issue still open unexpectedly: report the discrepancy and recommend one corrective phase.
@@ -334,6 +346,8 @@ Awaiting: <specific user authorization or manual event>
 
 Show terminal counts as history until a new run is authorized, then show that run's counter separately from any earlier history. Before any run, use `Review cycle: not started` and `Review attempt: 0/3 — not started`.
 
-When offering remote monitoring, keep `Phase: Waiting for merge`, use `Next step: Wait for remote code review completion` and `Awaiting: User confirmation`, and preserve the local review fields. After monitoring returns, is declined, or is unavailable, return the next step and awaiting event to manual review and merge; an optional monitoring limitation alone is not a workflow blocker.
+When offering remote monitoring, keep `Phase: Waiting for merge`, use `Next step: Wait for remote code review completion` and `Awaiting: User confirmation`, and preserve the local review fields. After monitoring returns, is declined, or is unavailable, return the next step and awaiting event to manual review and merge unless findings evaluation is being offered or is pending; an optional monitoring limitation alone is not a workflow blocker.
+
+For findings evaluation, preserve the same phase and local review fields. Use `Next step: Evaluate remote review findings` and `Awaiting: User confirmation` when offering it, then `Awaiting: none` during authorized assessment. After presenting proposed corrections, use `Next step: Decide on review corrections` and `Awaiting: User decision`. If evaluation is declined, unavailable, incomplete, or retrieves no findings, no corrections are recommended, or the user declines corrections, return to manual review and merge; an optional evaluation limitation alone is not a workflow blocker.
 
 Do not offer several equally actionable next steps. Recommend one and explain a blocker when present. During authorized automatic corrections, state the next action and `Awaiting: none`; otherwise wait for the required authorization or manual event.
