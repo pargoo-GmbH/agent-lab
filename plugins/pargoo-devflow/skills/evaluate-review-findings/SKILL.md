@@ -44,13 +44,33 @@ Never label an unverified claim confirmed.
 
 Before finalizing, re-read the PR head. If it changed, refresh affected evidence where practical or clearly mark affected conclusions as potentially stale. If freshness cannot be checked, disclose that limitation.
 
-Return a concise report to the caller containing:
+Present the assessment as a concise Markdown report, with a compact table followed by numbered reasoning:
 
-- PR reference, reviewed full head SHA, number of findings evaluated, and retrieval or freshness limitations.
-- For each finding: original source link(s), short claim summary, classification, severity, specific code/documentation evidence, impact, and recommended action.
-- An overall recommendation identifying which corrections, if any, warrant the user's consideration.
+```markdown
+### Remote Review Findings Assessment
 
-If no relevant findings were retrieved, say so explicitly; this is not proof that the implementation is correct or approved.
+**PR:** <owner/repo#number>\
+**Head SHA:** <full SHA>\
+**Findings:** <count evaluated>
+
+| Finding | Assessment | Severity | Recommended Action |
+| --- | --- | --- | --- |
+| #1 — [Short summary](original-comment-url) | <classification> | <severity> | <action> |
+
+**Evidence and reasoning**
+
+1. <Specific code, requirements, or documentation evidence; reasoning and impact.>
+
+**Overall recommendation**
+
+<Which corrections, if any, warrant user consideration.>
+```
+
+Use the four classifications above verbatim and keep severity separate. Link original review comments or reviews when available; do not invent links. Keep rows short and use matching finding numbers for brief explanations without repeating the table. For many findings, group rows by classification without omitting evaluated findings.
+
+State retrieval, attribution, or freshness limitations near the report header and mark partial counts explicitly. If no relevant findings were retrieved, omit the table and numbered explanations and say so; this is not proof of correctness or approval. If retrieval or attribution prevents assessment, report it as incomplete rather than a zero-findings result.
+
+Return the report without user authorization questions; the caller owns decisions and workflow transitions.
 
 ## Read-only boundary
 
