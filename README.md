@@ -62,6 +62,19 @@ Available standalone skills:
 - `building-components`
 - `init-ghp-labels`
 - `organizing-classnames`
+- [`strapi-editor`](skills/strapi-editor/README.md) — shared editorial workflows
+  for separately connected Strapi gateways in ChatGPT web or Codex. Independent
+  of the Apple Silicon plugin above.
+
+To build the Strapi skill's private customer plugin ZIP from its canonical source:
+
+```sh
+node --experimental-strip-types scripts/package-strapi-editor.ts
+```
+
+The versioned archive is written to ignored `dist/`. See the
+[skill README](skills/strapi-editor/README.md) for prerequisites, tests and customer
+setup. This command does not publish a release or update the marketplace.
 
 **Install skills from the Plugin independently:**
 

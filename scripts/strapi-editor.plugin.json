@@ -1,0 +1,21 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "pargoo-strapi-editor",
+  "version": "0.1.0",
+  "description": "Shared editorial workflows for compatible, separately connected Strapi gateways.",
+  "author": {
+    "name": "pargoo"
+  },
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "pargoo Strapi Editor",
+        "shortDescription": "Edit connected Strapi content",
+        "longDescription": "Find, draft, edit, translate and preview content through a compatible Strapi gateway. Includes original image uploads and explicit chat confirmation for publishing or unpublishing in every environment. Requires a separately connected project gateway.",
+        "developerName": "pargoo",
+        "category": "Productivity",
+        "defaultPrompt": "Help me edit content in my connected Strapi project."
+      }
+    }
+  }
+}
