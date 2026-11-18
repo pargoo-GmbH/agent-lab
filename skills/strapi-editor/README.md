@@ -32,9 +32,33 @@ and environment in the first content request. If Plugin Creator or the required
 connection is unavailable, ask the workspace administrator to enable the supported
 installation path. Attaching a ZIP alone does not install a plugin.
 
+For gateways using Strapi Admin-token authorization, enter the restricted token
+only on the gateway's HTTPS connection page. The host manages the resulting
+gateway OAuth credentials.
+
 For agents supporting standalone skills, install this directory as
 `strapi-editor`, including any supporting files. The same gateway requirements
 apply. Installation does not grant access to a CMS or approve content changes.
+
+## Extend the workflow
+
+Choose the location by what the new material changes:
+
+| Material                                                           | Location                                                                                  |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| A rule needed throughout the existing editing workflow             | `skills/strapi-editor/SKILL.md`                                                           |
+| A detailed guide needed only for a particular editing task         | `skills/strapi-editor/references/<topic>.md`, linked from `SKILL.md` with when to read it |
+| A separate task with its own trigger, such as a content audit      | A sibling `skills/<skill-name>/SKILL.md`                                                  |
+| A customer's tone, terminology, content formats, fields or locales | That project's MCP context and `get_content_guide`                                        |
+
+Create supporting files and separate skills when a concrete task needs them.
+Keep each rule in one source. Project guides describe content requirements;
+they do not override project selection or publication confirmation rules.
+
+The current customer builder includes only `strapi-editor`. To ship another
+skill in the same plugin, extend the builder and package tests to include that
+skill explicitly from its canonical directory. Creating a sibling directory
+does not add it to the ZIP automatically. Bump the package version and rebuild.
 
 ## Build the customer ZIP
 

@@ -20,10 +20,8 @@ Use the host's qualified tool names to keep every call on that connection;
 identical tool names in different Apps are not interchangeable.
 
 If the connection needs authorization, use the host's Connect/sign-in flow.
-The user enters their restricted Strapi Admin token only on the gateway's HTTPS
-connection page. Never request, repeat, store or pass that token in chat or tool
-arguments. The host manages gateway OAuth credentials. Do not invent a login URL
-or work around a missing/expired connection with another credential.
+Never request or expose CMS credentials in chat or tool arguments, or substitute
+another credential when access fails.
 
 1. Call the selected connection's `get_project_context`. Require
    `contractVersion: 1`, record its `projectId` and `environment`, and verify them
@@ -49,10 +47,10 @@ authoritative. If a guide conflicts with them, report the mismatch and stop the
 dependent edit. Editorial work does not authorize repairing CMS schemas,
 permissions or infrastructure.
 
-## Discuss, write and verify
+## Edit and verify
 
-Discuss the requested content with the user, then perform the authorized edits
-using the guide and actual schemas. Preserve unrelated fields, existing component
+Perform the requested edits using the guide and actual schemas; clarify only
+missing editorial decisions. Preserve unrelated fields, existing component
 identities, order, relationships and stable document identity. For translation,
 follow the guide's locale/document model rather than assuming a new document.
 Explain shared-field or relation changes when they affect other documents/locales.
@@ -91,8 +89,8 @@ never assume that confirmation authorizes a second or different operation.
 
 ## Upload an original chat image
 
-Use the selected gateway's `upload_chat_image` for a new image and choose one stable unique
-`requestId` for the intended upload. Follow the host-visible `file` schema:
+Use the selected gateway's `upload_chat_image` for a new image and choose one
+unique `requestId` matching its schema. Follow the host-visible `file` schema:
 
 - If it expects an absolute local file path, pass the path of the original
   attached image. The host's Apps file bridge transfers the bytes and supplies
@@ -106,35 +104,28 @@ reject it merely because the gateway receives a different descriptor format.
 If the host cannot transfer the original attachment, report that capability gap.
 Do not print temporary download URLs or switch to another plugin's upload tool.
 
-Accept PNG, JPEG and WebP within the advertised size limit. Use the discovered
-schema for optional name, alt, caption and an existing folder ID. For multiple
-images, upload one at a time with distinct request IDs, retaining partial results.
+Follow the discovered schema for supported formats, size limits and optional
+metadata. For multiple images, upload one at a time with distinct request IDs.
 Use the returned numeric `asset.id` in the content field identified by the guide.
 A successful upload creates media; it does not save or publish the article.
 
-Reuse the same `requestId` when checking/retrying the same upload. Retain it when
-the host refreshes a download URL for the same file. A completed retry returns
-the prior asset. On `outcomeUnknown`, pending state or input conflict, do not
-issue a new upload or change requestId to bypass the receipt. Follow
-`retryGuidance` and reconcile with the Media Library/operator. Native content
-writes also must not be repeated automatically after an uncertain result.
-
 ## Recovery and connection changes
 
-Request IDs contain 8–128 characters matching `[A-Za-z0-9][A-Za-z0-9._:-]*`.
-Receipts belong to the current connection; reconnecting is not a way to retry
-an uncertain upload in another scope.
+Keep each upload's original inputs, `requestId` and receipt associated with its
+connection. Reuse that ID for the same upload, including after refreshing an
+expired attachment reference. Reconnecting must not bypass an existing receipt.
 
+- After a completed upload, reuse its asset ID without uploading again.
+- On `outcomeUnknown`, pending state or input conflict, do not issue a new upload
+  or change the request ID. Follow `retryGuidance` and reconcile existing media
+  with the Media Library/operator before another attempt.
 - If an attachment expires before upload, obtain a fresh reference for the same
-  original file or ask the user to reattach it, following the retry guidance.
-- After a completed receipt, reuse its asset ID without another upload POST.
-- For changed input under the same request ID, preserve the original request
-  details and reconcile existing media before starting a new intended upload.
+  original file or ask the user to reattach it.
+- For partial multi-image success, retain successful asset IDs and report the
+  failed image. Do not delete successful media or revert unrelated content.
 - After a definitive CMS rejection, address the reported connection or permission
   problem and follow explicit retry guidance. HTTP transport success alone is
   not proof that the CMS operation succeeded.
-- For partial multi-image success, retain successful asset IDs and report the
-  failed image. Do not delete successful media or revert unrelated content.
 - For an uncertain content write, read back and reconcile before repeating it.
 
 After a project/environment switch, reconnect, or permission change, rediscover
