@@ -89,6 +89,26 @@ never assume that confirmation authorizes a second or different operation.
 
 ## Upload an original chat image
 
+For new article images, use a dedicated Media Library folder by default unless
+the user specifies another destination. Resolve the folder before uploading:
+
+1. Use the selected gateway's discovered folder tools and the project's folder
+   convention to find and reuse the article's existing folder. A matching title
+   alone does not establish that a folder belongs to this article.
+2. If none exists, create one using the guide's parent and naming convention;
+   otherwise use a valid, distinct folder name derived from the article's slug
+   or title at the library root. A new article can have a folder before its draft
+   exists; do not create placeholder content just to obtain a document ID.
+   Clarify ambiguous matches. Reconcile naming conflicts or uncertain creation
+   results with a folder lookup before any retry.
+3. Pass the verified numeric folder ID as `folderId` for each image and retain it
+   for retries. Verify the asset's folder after upload when a media read tool is
+   available; report a mismatch without uploading another copy.
+
+If the gateway cannot resolve/create a suitable folder or accept `folderId`,
+explain the limitation and ask for a destination instead of silently uploading
+to the root. Do not move existing or shared media without the user's instruction.
+
 Use the selected gateway's `upload_chat_image` for a new image and choose one
 unique `requestId` matching its schema. Follow the host-visible `file` schema:
 
