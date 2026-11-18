@@ -15,7 +15,7 @@ Turn incomplete issue context into an implementation-ready plan without discardi
 ## 1. Resolve the task
 
 - Identify the exact tracker, repository or project, and issue when supplied.
-- Verify that any local checkout belongs to the resolved task's repository before using it as evidence. Without an issue, resolve the destination from supplied context and the checkout; ask when ambiguous.
+- An issue can require changes in several repositories, including repositories outside the issue repository. Verify each checkout's repository identity and relevance to the task before using it as evidence. Without an issue, resolve the destination from supplied context and the checkout, and ask when ambiguous.
 - Read the complete issue body, comments, attachments, metadata, linked designs, and existing child links when available.
 - Treat the current conversation as planning evidence. Capture approved decisions, rejected options, constraints, and intentional placeholders.
 - Inspect repository context for discoverable facts instead of asking the user. Read project instructions before inspecting or proposing changes.
@@ -39,6 +39,8 @@ Separate facts, decisions, assumptions, and open questions. Do not invent URLs, 
 
 ## 3. Decide whether to keep or split
 
+For a targeted scope revision to an already planned issue, go to section 4 and preview the affected scope and PR requirements together. Preserve the existing issue structure unless decomposition is separately requested.
+
 Prefer one issue when the work:
 
 - produces one coherent, reviewable outcome;
@@ -55,7 +57,7 @@ Recommend splitting only when at least one boundary is genuine:
 - sequencing or risk requires isolated rollout and verification;
 - the issue would remain too broad or ambiguous for one implementation pass.
 
-Keep tests with the behavior they verify. Do not split solely because the task has several files, implementation steps, responsive states, or test cases.
+Keep tests with the behavior they verify. Do not split solely because the task spans several repositories, files, implementation steps, responsive states, or test cases.
 
 State the verdict first and explain the decisive reasons.
 
@@ -131,13 +133,29 @@ Adapt the headings to the task:
 - Prefer product and behavioral requirements over a line-by-line coding recipe.
 - Ensure an implementing agent can proceed without reconstructing hidden conversation context.
 
+### Required Pull Requests
+
+Identify the PR deliverables for this issue's own scope. Use a separate managed section, outside the implementation brief and any subissue plan:
+
+```markdown
+<!-- required-prs:start -->
+## Required Pull Requests
+
+- [ ] `frontend-form` — `owner/frontend` — Submit the form (base: `trunk`) — PR required
+<!-- required-prs:end -->
+```
+
+Give each deliverable a stable ID unique within the issue, a target repository, and a short description. Distinguish separate PRs in the same repository by deliverable. Include the intended base or routing decision when known and surface unresolved destinations. Use `No PRs required for this issue's own scope.` only when that is an established decision. These entries track delivery and are not implementation acceptance criteria.
+
+Preserve IDs for continuing deliverables and carry forward their PR references. Keep superseded references as history, separate from the current PR. Leave live PR reconciliation to `develop`. For an approved scope removal, move the entry under `### No longer required` inside the same section with its ID, rationale and any PR references. Record the approved scope in the issue so it can be recovered alongside the checklist.
+
 ## 5. Preview before writing
 
 Present:
 
 1. the keep-or-split verdict;
 2. the current-state audit;
-3. the complete proposed implementation brief;
+3. the complete proposed implementation brief and Required Pull Requests section, when applicable;
 4. any issue metadata changes, if relevant;
 5. a statement that all unrelated existing content will be preserved.
 
@@ -172,6 +190,8 @@ After approval:
 5. If a similar unmarked plan already exists, preview a reconciliation before removing or rewriting it.
 6. Apply only approved metadata changes.
 7. Re-fetch the issue and verify the original content, managed section, links, attachments, and metadata.
+
+For `required-prs`, apply the same fresh-read, preview, and verification rules independently of other sections. Reconcile by ID and preserve unrelated text verbatim. Reuse a single existing section. If equivalent unmarked content, duplicate or malformed markers, or a conflicting edit makes the approved change ambiguous, stop and resolve it with a revised approval. Carry forward unrelated concurrent edits and skip a write when the approved result is already present.
 
 Never implement repository changes as part of this skill unless the user separately authorizes implementation.
 

@@ -17,7 +17,7 @@ Turn a broad issue into a reviewable dependency graph of bounded child issues. S
 ### 1. Resolve and inspect the parent
 
 - Resolve the exact issue tracker, repository or project, and parent issue.
-- Verify that any local checkout belongs to the resolved parent before inspecting it. When the user supplies issue text without a repository, plan from the supplied evidence and mark repository context as unknown; never adopt an ambient checkout as the target.
+- A parent issue can require changes in several repositories, including repositories outside the issue repository. Verify each checkout's repository identity and relevance to the parent scope before inspecting it. When the user supplies issue text without a repository, plan from the supplied evidence and mark repository context as unknown. Never adopt an ambient checkout as the target.
 - Read the complete parent title, body, attachments, labels, assignees, milestone, comments, and existing child links when available.
 - Inspect linked designs, specifications, and repository context needed to understand existing implementation. Use read-only operations during this phase.
 - Distinguish facts from assumptions. List missing destinations, content, ownership, or product decisions that could block a child issue.
@@ -119,6 +119,8 @@ Part of the parent issue.
 
 Do not repeat the entire parent body in every child. Include enough context for a contributor to implement the child without reconstructing hidden assumptions.
 
+Include a `## Required Pull Requests` section in each child draft, delimited by `<!-- required-prs:start -->` and `<!-- required-prs:end -->`. Give each PR deliverable a stable ID, target `owner/repo`, description, and intended base or route when known. Use unchecked checklist items for new requirements and `No PRs required for this issue's own scope.` for an approved empty list. Assign each deliverable to exactly one owning issue. Preserve the parent integration base in the target repository where applicable, or its verified default for independent delivery. Surface unresolved routing decisions in the proposal.
+
 #### Parent update preview
 
 Show the section that will be added to or refreshed in the parent body. Include:
@@ -128,6 +130,8 @@ Show the section that will be added to or refreshed in the parent body. Include:
 - Dependency order
 - Reusable implementation or context when useful
 - Unresolved decisions
+
+Preview the parent's separate `Required Pull Requests` section for genuine parent-owned delivery, such as an integration PR. When the parent owns none, say so explicitly in that section. Keep child PR requirements in their child issues and use the existing child relationships for aggregation.
 
 State explicitly that all unrelated existing parent content, including images, links, requirements, and notes, will be preserved.
 
@@ -177,6 +181,7 @@ If creation partially fails, keep successful issue numbers, retry only failed op
 - Never replace the entire body with only the decomposition plan.
 - If a similar unmarked section already exists, show how it will be reconciled and obtain approval before removing or rewriting it.
 - Add linked checklist items for every created child and preserve the approved dependency order and unresolved decisions.
+- Apply the same preservation and approval rules to the separate `required-prs` section on the parent. Reconcile continuing entries by ID and carry forward PR references. Keep approved removals with their IDs, rationale, and PR history under `### No longer required`. Stop for renewed approval if an external edit conflicts with the preview, or the existing section is ambiguous. Skip edits already reflected in the latest body.
 
 ### 8. Verify and report
 
@@ -192,7 +197,7 @@ After writing:
 ## Tool guidance
 
 - Prefer the issue tracker's structured connector or API for reads and writes.
-- Use local repository inspection only after verifying that the checkout belongs to the parent issue, and only for evidence needed to produce a better decomposition.
+- Apply the checkout verification in section 1 and limit local inspection to evidence needed for decomposition.
 - Fall back to a CLI only when the connector lacks required child-linking or update capabilities.
 - Never expose tokens or authentication details.
 - Do not modify repository files unless the user separately asks for implementation work.
@@ -201,7 +206,7 @@ After writing:
 
 Before presenting the proposal, confirm:
 
-- Every parent requirement belongs to at least one child or is explicitly out of scope.
+- Every parent requirement is assigned to child work, retained as genuine parent work, or explicitly out of scope. No PR deliverable has more than one owner.
 - Every dependency is necessary and points in one direction.
 - Parallel issues do not claim the same primary outcome.
 - Each child can be understood without private reasoning from the planning conversation.
