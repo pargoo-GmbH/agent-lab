@@ -5,11 +5,10 @@ description: Find, create, edit, translate, preview, publish or unpublish conten
 
 # Strapi content editor
 
-Use the selected project's connected gateway App and its discovered MCP tools.
-The skill can be installed separately from the gateway; it does not provide a
-connection or tools itself. Managers work in ChatGPT web or Codex through
-conversation and attachments. Do not ask them to install Node.js, run a server,
-execute shell commands or copy files into a developer checkout.
+Use the selected project's connected gateway and its discovered MCP tools.
+If the gateway is unavailable, request connection through the host's
+connection flow. Do not substitute local scripts or direct API calls
+for unavailable MCP tools.
 
 ## Connect and discover
 

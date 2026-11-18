@@ -5,6 +5,7 @@ import {
   mkdir,
   mkdtemp,
   readFile,
+  readdir,
   rename,
   rm,
   symlink,
@@ -141,10 +142,7 @@ test("symlinked supporting files cannot pull data into a customer package", asyn
   await writeFile(join(root, "private.txt"), "not for distribution");
   await symlink(join(root, "private.txt"), join(references, "leak.txt"));
   await assert.rejects(buildPackage(root), /Symlinks are not allowed/);
-  await assert.rejects(
-    readFile(join(root, "dist", "pargoo-strapi-editor-0.1.0.zip")),
-    { code: "ENOENT" },
-  );
+  await assert.rejects(readdir(join(root, "dist")), { code: "ENOENT" });
 });
 
 test("a symlinked skill directory cannot redirect the package source", async (t) => {
