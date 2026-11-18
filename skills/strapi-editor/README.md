@@ -12,6 +12,10 @@ the actual content tools and schemas described by its guide. Image uploads also
 require `upload_chat_image` and the host's original-attachment transfer support.
 A version number alone does not establish compatibility with these behaviors.
 
+Article image organization also requires folder lookup/create tools and upload
+support for `folderId`. The project guide can specify its folder naming convention
+and parent location. Confirm those capabilities when connecting a gateway.
+
 The user connects and authorizes each project gateway separately. This package
 contains no MCP server, credentials, endpoint or customer-specific App binding.
 Use only gateways supplied or approved by the customer's administrator.
