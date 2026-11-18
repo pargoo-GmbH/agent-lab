@@ -63,12 +63,12 @@ This question only discovers existing context; it does not initiate issue creati
 
 Perform read-only discovery first:
 
-- Resolve the repository from supplied context and the current checkout. When an issue is known, read its latest body, comments, state, relationships, and linked PRs.
+- Resolve the issue repository and verify each relevant checkout independently. When an issue is known, read its latest body, comments, state, relationships, Required Pull Requests section, and linked PRs. Use the full Issue reference when its repository differs from a checkout.
 - Recover implementation branches from direct GitHub issue links or verified issue-associated PR head branches. Check the head repository, remote existence, intended base, and PR state; completed work does not automatically provide a suitable branch for new implementation.
-- Discover the repository's actual default branch from GitHub or authoritative repository metadata.
+- Discover each target repository's actual default branch from GitHub or authoritative repository metadata.
 - Inspect the current branch, working tree, commits, merge bases, remote branches, and PR base/head/status.
 - Determine whether the issue is a parent, a subissue, or a standalone issue from explicit GitHub relationships and established context.
-- For split work, identify the parent integration branch and each child PR's intended base. Never guess an ambiguous parent branch.
+- For split work, identify any applicable parent integration branch in each target repository and recover each child PR's intended base. Never guess an ambiguous parent branch.
 - Distinguish work already planned, implemented, reported, opened as a PR, merged, or closed.
 - Do not infer an issue solely from a branch name.
 
@@ -76,20 +76,30 @@ Use GitHub's Issue → Branch → PR relationships as association evidence. A PR
 
 Ask for missing facts only when the issue, parent relationship, intended base, or branch selection remains genuinely ambiguous. Apply Issue branch setup before implementation edits. A task awaiting issue creation stays in planning.
 
+### Reconcile required PRs
+
+- Use the current approved scope and the `required-prs` section of the owning issue. Compare both with the latest Issue and PR evidence. If the section is missing, recover requirements from approved scope and verified Issue, branch, and PR evidence, including child-to-parent and final parent delivery. Preview any backfill for separate approval and continue the established route when the evidence is unambiguous. Resolve unknown requirements before asserting completeness.
+- For every active ID, verify the actual PR URL or repository and number, head repository and branch, intended base repository and branch, and live state. Use recorded links, Issue associations and verified repository/head/base evidence to match the right deliverable. Reuse an appropriate PR found this way, including after an interrupted create or manual handoff. Resolve competing or uncertain matches before creating another PR, and do not count one PR for multiple requirements. A matching title, branch name or checkbox alone is insufficient.
+- Distinguish PR required, open, merged, closed without merge, and unavailable or incorrectly routed. Only a verified merge into the intended destination checks the box. Keep approved removals and their rationale separate from active work. When a recorded PR is missing, closed without merge or misrouted, investigate before proposing a replacement and preserve the evidence of what happened.
+- After PR creation, recovery, or a verified state change, match the live result to its owning Issue. Preview the exact Issue and checklist change, including verified links and statuses, and apply the resolved `refine-issue-plan` skill's explicit approval, fresh-read reconciliation and readback rules for the managed section. PR creation approval grants no Issue-body edits. If synchronization cannot be authorized or verified, report it as outstanding and distinguish the live PR result from what was saved. Continue independent work under existing authorization when the scope and route remain clear. Avoid writes when the recorded content is already correct.
+- If discoveries or external edits conflict with approved scope, resolve the discrepancy before relying on the changed list. Preview additions and removals with their rationale through the existing refinement and Issue-edit approval rules. Preserve IDs for continuing deliverables, keep existing links where applicable, and retain superseded links and approved removals as history. Reassess material changes under Pre-implementation Assessment before proposing or performing changed implementation. Routine status reconciliation does not repeat planning or reset a Review Cycle.
+
+Before reporting **all PRs prepared**, recheck the recorded or unambiguously recovered requirements and verify that each has a correctly routed open or merged PR. Report missing, invalid and unverified entries explicitly. Report **all PRs merged** only when each is verified merged. Report Issue closure separately. For a parent, check the required children through their relationships and verify their requirements as well as the parent's own. An explicit no-PR decision means there is no PR obligation for that scope and does not prove implementation or delivery.
+
 ## Choose the Current Phase
 
-Use the first matching state:
+Use the first matching state after reconciliation. An open or merged PR does not suppress an actionable missing requirement for the current scope.
 
 1. **Needs discovery**: the task or issue has only a rough idea, links, or materially incomplete requirements.
 2. **Needs refinement**: requirements are sufficiently clear, but no issue exists or the existing issue still needs its implementation brief or split decision.
 3. **Ready to implement**: the current issue has an adequate brief and testable acceptance criteria, with no implementation yet complete.
 4. **Implementation in progress**: code is incomplete, has known failures, or has blocking review feedback.
 5. **Ready to report**: implementation appears complete and every acceptance criterion has credible evidence, but `report-implementation` has not successfully completed for this issue.
-6. **Ready for PR**: reporting succeeded and no PR exists for the completed branch.
-7. **Waiting for merge**: the intended PR is open or under manual review.
-8. **Ready for next child**: a child PR merged into the parent integration branch and another unblocked child remains.
-9. **Ready for parent integration gate**: every required child PR merged into the parent integration branch, but the parent has not passed integrated reporting.
-10. **Complete**: the final PR merged into the intended default branch and the issues it is meant to close are closed.
+6. **Ready for PR**: reporting succeeded and an eligible deliverable has no verified PR.
+7. **Waiting for merge**: an intended PR is open and no required work can progress before the relevant merge or review.
+8. **Ready for next child**: the relevant dependency delivery gates passed and another unblocked child remains.
+9. **Ready for parent integration gate**: required child delivery is verified, and applicable parent acceptance and reporting have not passed.
+10. **Complete**: applicable reporting passed, all required PRs merged into their intended bases, and Issues that were meant to close are closed. If closure is separate, distinguish verified delivery from the outstanding lifecycle decision.
 
 Treat closed or merged states that disagree with the intended route as discrepancies, not completion. Report the mismatch and recommend a corrective next step.
 
@@ -105,7 +115,7 @@ If the issue already contains a clear implementation brief, scope, constraints, 
 
 ### Refinement
 
-Run `refine-issue-plan` only once for the task or parent issue. Let it decide whether the work remains one issue or is split and own approved issue creation. Without an existing issue, require a verified issue URL before leaving refinement. After refinement finishes, apply Pre-implementation Assessment for a standalone issue or follow child selection in Split Issue Route, following its result handling and implementation authorization rules.
+Run initial `refine-issue-plan` only once for the task or parent issue. Let it decide whether the work remains one issue or is split and own approved issue creation. Use the same skill for a separately authorized, targeted scope revision to the owning Issue. Without an existing issue, require a verified issue URL before leaving refinement. After initial refinement finishes, apply Pre-implementation Assessment for a standalone issue or follow child selection in Split Issue Route, following its result handling and implementation authorization rules.
 
 Never rerun parent refinement merely because the workflow resumed or moved to a child issue.
 
@@ -166,14 +176,14 @@ Use relevant repository instructions and skills during implementation. Plan mode
 
 ### Issue branch setup
 
-Before implementation edits on start or resume:
+Before implementation edits on start or resume, resolve the branch in the verified checkout for the selected deliverable. When several deliverables share a repository, verify which branch belongs to each before reuse:
 
 1. **Honor an explicit choice.** Use the alternative feature branch the user selected for this issue, including local experimental branches. No publication or issue link is required. Keep that choice while applicable and recoverable without repeated confirmation.
 2. **Prefer an existing issue branch.** Without an explicit choice, use a suitable branch recovered from a direct issue link or an associated PR, preferring the current checkout when suitable. Otherwise, automatically switch a clean, unrelated checkout, including the default branch or a previous task's branch, to the clearly identified issue branch. Ask only when selection remains genuinely ambiguous; do not create a duplicate to avoid deciding.
 3. **Protect uncommitted work.** Before switching with uncommitted changes, show the affected files and target branch and ask how to proceed. Do not automatically stash, commit, discard, or carry changes across branches. Changes on the selected branch alone need no branch-choice question.
 4. **Create only when needed.** If no suitable branch or explicit alternative exists, create and link one during authorized implementation. Follow repository and agent naming conventions and resolve local or remote name collisions before creation.
 
-Create standalone and parent integration branches from the latest remote default branch, and child branches from the latest remote verified parent integration branch. Link each new branch to its own issue. The starting point determines ancestry, not upstream tracking. Reusing a branch does not authorize rebasing or resetting it.
+Create standalone and parent integration branches from the relevant repository's latest remote default branch. Create child branches from their latest remote verified parent integration base when applicable, or from that repository's latest remote default for approved independent delivery. Link each new branch to its own issue. The starting point determines ancestry, not upstream tracking. Reusing a branch does not authorize rebasing or resetting it.
 
 Use supported GitHub tooling. [gh issue develop](https://cli.github.com/manual/gh_issue_develop) lists direct links and creates linked branches; also inspect associated PRs during discovery:
 
@@ -227,6 +237,8 @@ If all criteria appear satisfied, recommend the reporting phase and wait. The us
 
 Pass `report-implementation` the established Issue, implementation scope and intended base, available verification evidence, and active Review Cycle state/scope/count with useful previous findings. Set `independent review required: yes`. Reuse known context; reporting delegates the detailed reviewer assignment to `review-implementation`. Do not spawn the reviewer directly.
 
+For an issue spanning repositories, hand off every relevant repository, checkout, revision, intended base, and the acceptance evidence across them. Require that coverage in the checks, independent review, and acceptance audit before the delegate drafts or posts the Issue update. Verify the returned coverage before accepting the gate or offering a PR. If the existing gate cannot establish it, report the specific limitation as BLOCKED. Do not substitute partial reports, treat an unreviewed repository as passing, or bypass retry limits.
+
 A successful posted report is the durable completion signal for that scope and implementation. Findings and required check failures stop reporting before any Issue write; apply the Review Cycle policy below. BLOCKED requires a concrete resolution or human decision, not repeated infrastructure launches. After a passed review, a report awaiting preview/post authorization remains in reporting; do not rerun review solely to post it if the reviewed implementation, requirements, and base remain unchanged.
 
 ## Independent Local Review Cycle
@@ -257,40 +269,43 @@ Follow this sequence, with a separate authorization before every arrow. Apply Pr
 
 `planning complete` -> `implementation` -> `report-implementation` -> `creating-pull-requests` -> `manual review and merge` -> `completion check`
 
-Supply the discovered default branch as the intended PR base. After the PR opens, report that the workflow is waiting for manual review and merge. Never merge it on the user's behalf unless separately and explicitly requested outside this workflow.
+Apply branch setup and implementation for each required deliverable, then apply the existing whole-Issue reporting gate. Reuse successful reporting while its verified scope and revisions still apply. Reconcile after each PR operation and recommend the next actionable required work even if another PR is open. Never merge on the user's behalf unless separately and explicitly requested outside this workflow.
 
-On `continue`, inspect the PR and issue. Mark complete only when the PR merged into the intended default branch and the issue is closed.
+On `continue`, apply the completeness check and distinguish merge status from Issue closure.
 
 ## Split Issue Route
 
-Keep one parent integration branch and deliver existing child issues sequentially unless the user explicitly chooses another safe order.
+Preserve the single-repository child-to-parent integration route. For unrelated repositories, apply the approved integration route separately in each repository. Use its verified parent integration branch where applicable, or its discovered default for independent delivery. Do not invent branches or parent PRs. Deliver existing child issues sequentially unless the user explicitly chooses another safe order.
 
 For each child:
 
 1. Reconstruct parent, child, branch, dependency, and PR state.
 2. Select the next unblocked child by dependency order, foundational value, and risk reduction.
 3. Apply Pre-implementation Assessment for the selected child before recommending its implementation, following its result handling and authorization rules. Allow the user to override the order, assessing the newly selected child before recommending or starting it.
-4. Apply Issue branch setup for that child, linking any new child branch to the child issue and basing it on the parent integration branch; then implement it.
+4. Apply Issue branch setup for that child using the verified base in each affected repository. Link new branches to the child issue and implement its scope.
 5. After all child acceptance criteria appear satisfied, recommend and then delegate one `report-implementation` gate for that child.
-6. After successful reporting, recommend and then delegate `creating-pull-requests`, explicitly supplying the parent integration branch as the base.
-7. Wait for manual review and merge into the parent integration branch.
+6. After successful reporting, recommend and then delegate `creating-pull-requests` for each required deliverable, explicitly supplying the verified destination and base.
+7. Verify each required child PR merges into its intended base. While one PR is open, continue tracking and proposing remaining actionable requirements in the selected child. For a child with no PR requirement, verify its applicable acceptance and delivery evidence.
 
-After a child PR merges, reconstruct state and select the next unblocked child through the same assessment and authorization steps. Do not rerun parent refinement.
+After the selected child's applicable delivery gates pass, reconstruct state and select the next unblocked child through the same assessment and authorization steps. Use verified merge and acceptance evidence for dependency readiness, even when child Issues remain Open. Do not rerun parent refinement.
 
-After all required child PRs merge:
+After all required child delivery is verified:
 
-1. Recommend the parent integration reporting phase and wait.
-2. Run one integrated `report-implementation` gate for the parent against the discovered default branch.
-3. If it succeeds, recommend the final parent PR and wait.
-4. Delegate `creating-pull-requests`, explicitly supplying the discovered default branch as the base and the appropriate parent/child issue closure context.
-5. Wait for manual review and merge.
-6. Mark complete only after the final parent PR merges into the intended default branch and the issues it is meant to close are closed.
+1. If parent-owned implementation remains, use the existing assessment, implementation authorization, and branch setup for that scope. Apply the parent acceptance and reporting gate. For integration, run the existing integrated `report-implementation` gate against the relevant discovered default branches. Where no parent PR is required, verify parent acceptance from delivered child work and apply existing reporting as applicable.
+2. After applicable reporting succeeds, recommend and delegate `creating-pull-requests` for genuine parent-owned requirements only, with the verified destination, base and Issue closure context. Preserve manual review and merge.
+3. Apply the aggregate completeness and separate Issue closure checks.
+
+### Issue references for delivery PRs
+
+For every PR delegation, select the exact deliverable's verified checkout and head. Supply its verified target repository and approved base, using the discovered default for ordinary delivery. Keep explicitly requested release routing under the existing PR workflow. Preserve separate PR previews and publication approval.
+
+Supply verified Issue references and closing intent to `creating-pull-requests`. Keep child integration PR links non-closing. For each Issue a PR would close, allow closing references only when closure on that merge is intended, applicable acceptance and reporting gates passed, and all other required PRs are verified merged, including any related child or parent integration work needed to deliver that scope. Otherwise use non-closing references and preserve discoverability across repositories. Before recommending merge, check for premature closure from PR text, commits, or GitHub associations, including links inherited from the Issue branch. Flag any conflict and recommend a separately authorized correction that preserves a non-closing reference. PR tracking does not authorize Issue closure or release actions.
 
 ## Optional Remote Review Status
 
-After `creating-pull-requests` successfully creates a standalone, child, or final parent PR, offer to wait for the remote Pargoosh Code Review to complete within the default observation window defined by `track-code-review-status` as the next optional action. Wait for explicit user confirmation; PR creation authorization does not authorize monitoring.
+After `creating-pull-requests` successfully creates a standalone, child, or final parent PR, offer to wait for the remote Pargoosh Code Review to complete within the default observation window defined by `track-code-review-status`. Wait for explicit user confirmation; PR creation authorization does not authorize monitoring.
 
-Resolve `track-code-review-status` by name as an optional dependency, separate from the five mandatory dependencies. Once authorized, load and follow the `track-code-review-status` skill instructions, then delegate monitoring with an explicit request for waiting mode and the verified PR URL or repository and PR number, using that skill's default observation window. Use a one-time status check when the user explicitly requests it. Let that skill own checks, polling, timeouts, and result reporting; do not implement them or create cron jobs here. If the skill is unavailable or monitoring cannot complete, report the limitation without blocking the existing PR workflow. If the user declines, continue waiting for manual review and merge.
+Resolve `track-code-review-status` by name as an optional dependency, separate from the five mandatory dependencies. Once authorized, load and follow the `track-code-review-status` skill instructions, then delegate monitoring with an explicit request for waiting mode and the verified PR URL or repository and PR number, using that skill's default observation window. Use a one-time status check when the user explicitly requests it. Let that skill own checks, polling, timeouts, and result reporting; do not implement them or create cron jobs here. If the skill is unavailable or monitoring cannot complete, report the limitation without blocking the existing PR workflow. If the user declines, leave that PR awaiting manual review and merge.
 
 Relay the returned result to the user and preserve the waiting-for-merge phase and local Review Cycle state/count. Remote review results are not local review attempts, and a completed Check Run is neither approval nor evidence that there are no findings. Status alone does not authorize evaluating review comments, code changes, push, merge, or Issue closure; preserve the existing manual review, merge, and completion checks.
 
@@ -314,12 +329,11 @@ Before resuming implementation edits, reconstruct branch and PR relationships, a
 
 Interpret `continue`, `what is next?`, or an equivalent request as authorization to reconstruct state and recommend one next phase, not to execute multiple phases automatically. Preserve a previously authorized, recoverable **active** Review Cycle and its bounded corrections; do not request another OK merely for its remaining automatic attempts. Completed and stopped cycles remain history; do not resume them or automatically restart them.
 
-When waiting for a PR merge, inspect its current state:
+On every resume, reconcile the live PR set, including when waiting for a merge:
 
-- Open: keep waiting and report checks or review blockers when relevant; offer Optional Remote Review Status monitoring or Optional Remote Review Findings Evaluation as appropriate, with explicit authorization before delegation.
-- Merged into parent integration branch: move to next-child selection or the parent integration gate.
-- Merged into default branch: verify issue closure and completion.
-- Closed without merge, merged into the wrong base, or issue still open unexpectedly: report the discrepancy and recommend one corrective phase.
+- Open: report checks or review blockers when relevant. Recommend actionable outstanding work and offer optional remote review status monitoring or findings evaluation as appropriate for the open PR.
+- Merged into the intended base: recheck aggregate delivery before next-child selection, parent integration, or completion.
+- Missing, closed without merge, wrong destination, or unexpectedly closed Issue with outstanding delivery: report the discrepancy and recommend one corrective phase. When delivery is verified but intended Issue closure has not occurred, report that separately.
 
 ## Status Footer
 
@@ -358,8 +372,12 @@ Awaiting: <specific user authorization or manual event>
 
 Show terminal counts as history until a new run is authorized, then show that run's counter separately from any earlier history. Before any run, use `Review cycle: not started` and `Review attempt: 0/3 — not started`.
 
+For multi-PR work, qualify the active branch/base by repository and summarize verified PRs, outstanding requirements, and any checklist synchronization blockers. Use the actual route for that repository.
+
 When offering remote monitoring, keep `Phase: Waiting for merge`, use `Next step: Wait for remote code review completion` and `Awaiting: User confirmation`, and preserve the local review fields. After monitoring returns, is declined, or is unavailable, return the next step and awaiting event to manual review and merge unless findings evaluation is being offered or is pending; an optional monitoring limitation alone is not a workflow blocker.
 
 For findings evaluation, preserve the same phase and local review fields. Use `Next step: Evaluate remote review findings` and `Awaiting: User confirmation` when offering it, then `Awaiting: none` during authorized assessment. After presenting proposed corrections, use `Next step: Decide on review corrections` and `Awaiting: User decision`. If evaluation is declined, unavailable, incomplete, or retrieves no findings, no corrections are recommended, or the user declines corrections, return to manual review and merge; an optional evaluation limitation alone is not a workflow blocker.
+
+When another required deliverable can progress, recommend its next phase in the workflow footer and show review of the open PR as an optional action. Use the review footer when the user authorizes that action or a review decision is pending. Return to the actionable deliverable when the optional review ends without a pending decision.
 
 Do not offer several equally actionable next steps. Recommend one and explain a blocker when present. During authorized automatic corrections, state the next action and `Awaiting: none`; otherwise wait for the required authorization or manual event.
