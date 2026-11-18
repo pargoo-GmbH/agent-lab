@@ -12,10 +12,10 @@ for unavailable MCP tools.
 
 ## Connect and discover
 
-Resolve the user's project and environment to an available gateway connection.
+Resolve the user's project or selected App to an available gateway connection.
 If several connections match, or several are available and no destination was
-specified, ask which to use. Never pick the first match, assume production, or
-substitute another project when the requested connection is unavailable.
+specified, ask which to use. Never pick the first match or substitute another
+project when the requested connection is unavailable.
 Use the host's qualified tool names to keep every call on that connection;
 identical tool names in different Apps are not interchangeable.
 
@@ -24,13 +24,14 @@ Never request or expose CMS credentials in chat or tool arguments, or substitute
 another credential when access fails.
 
 1. Call the selected connection's `get_project_context`. Require
-   `contractVersion: 1`, record its `projectId` and `environment`, and verify them
-   against the user's intended destination. If ambiguous, clarify before writing;
+   `contractVersion: 1`, record its `projectId`, and verify it
+   against the user's intended project. No environment field is required.
+   If ambiguous, clarify before writing;
    if contradictory, stop the affected operation. Keep this connection and these
    identifiers together for all subsequent calls.
 2. Select an accessible content type from context and call
    `get_content_guide(contentType)` with its exact UID. Require the same contract
-   version, project and environment. An unsupported version is a concrete
+   version and project. An unsupported version is a concrete
    compatibility error; do not guess its meanings.
 3. Read current discovered tool schemas. The guide supplies project formats,
    components, localization, relations and available operation names. Do not
@@ -67,13 +68,13 @@ connected token's permissions.
 ## Confirm every publish or unpublish
 
 Before any publication or unpublication, read the current document and present
-the exact action, project/environment, content type, title/document ID, locales
+the exact action, project, selected connection, content type, title/document ID, locales
 and current revision or verified saved state. Show the relevant changes or
 preview when available. Prefer the host's native question or confirmation tool
 when it is available and permitted for approval requests. Otherwise, ask a
 concise confirmation question in chat. Wait for a subsequent explicit affirmative
 response from the user, including one submitted through the native tool, before
-acting. This applies in every environment, including development and production.
+acting. This applies to every connected project.
 
 An initial request such as "publish this article" starts this confirmation step;
 it is not the confirmation. Silence, a preselected option, timeout, empty response,
@@ -151,7 +152,7 @@ expired attachment reference. Reconnecting must not bypass an existing receipt.
   not proof that the CMS operation succeeded.
 - For an uncertain content write, read back and reconcile before repeating it.
 
-After a project/environment switch, reconnect, or permission change, rediscover
+After a project or connection switch, reconnect, or permission change, rediscover
 context and guides and verify the destination again. Do not carry document or
 media IDs, schemas, guides or publication confirmations into another destination.
 Keep unresolved operation receipts associated with their original connection;
@@ -165,7 +166,7 @@ A future date field does not establish a publication schedule.
 
 ## Report the result
 
-Report the project/environment, document identity, locale, saved/published state,
+Report the project, selected connection, document identity, locale, saved/published state,
 media IDs and preview when available. Separate CMS publication from observed
 website freshness. State unresolved failures without claiming success or altering
 infrastructure.

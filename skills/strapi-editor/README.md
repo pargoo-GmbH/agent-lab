@@ -7,7 +7,7 @@ This skill is independent of the macOS application in `plugins/strapi-editor`.
 ## Requirements
 
 The chosen gateway must expose `get_project_context` and `get_content_guide`
-with `contractVersion: 1`, consistent `projectId` and `environment` values, and
+with `contractVersion: 1`, a consistent `projectId`, and
 the actual content tools and schemas described by its guide. Image uploads also
 require `upload_chat_image` and the host's original-attachment transfer support.
 A version number alone does not establish compatibility with these behaviors.
@@ -16,7 +16,8 @@ Article image organization also requires folder lookup/create tools and upload
 support for `folderId`. The project guide can specify its folder naming convention
 and parent location. Confirm those capabilities when connecting a gateway.
 
-The user connects and authorizes each project gateway separately. This package
+No environment field is required in the editorial context or guide. The user
+connects and authorizes each project gateway separately. This package
 contains no MCP server, credentials, endpoint or customer-specific App binding.
 Use only gateways supplied or approved by the customer's administrator.
 
@@ -32,7 +33,7 @@ and use this prompt:
 
 After installing the plugin, connect the intended gateway through the host's
 connection flow, then start a new chat with both available. Specify the project
-and environment in the first content request. If Plugin Creator or the required
+or select its App in the first content request. If Plugin Creator or the required
 connection is unavailable, ask the workspace administrator to enable the supported
 installation path. Attaching a ZIP alone does not install a plugin.
 
