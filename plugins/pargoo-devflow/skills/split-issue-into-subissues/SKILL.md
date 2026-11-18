@@ -17,7 +17,7 @@ Turn a broad issue into a reviewable dependency graph of bounded child issues. S
 ### 1. Resolve and inspect the parent
 
 - Resolve the exact issue tracker, repository or project, and parent issue.
-- Verify that any local checkout belongs to the resolved parent before inspecting it. When the user supplies issue text without a repository, plan from the supplied evidence and mark repository context as unknown; never adopt an ambient checkout as the target.
+- A parent issue can require changes in several repositories, including repositories outside the issue repository. Verify each checkout's repository identity and relevance to the parent scope before inspecting it. When the user supplies issue text without a repository, plan from the supplied evidence and mark repository context as unknown. Never adopt an ambient checkout as the target.
 - Read the complete parent title, body, attachments, labels, assignees, milestone, comments, and existing child links when available.
 - Inspect linked designs, specifications, and repository context needed to understand existing implementation. Use read-only operations during this phase.
 - Distinguish facts from assumptions. List missing destinations, content, ownership, or product decisions that could block a child issue.
@@ -197,7 +197,7 @@ After writing:
 ## Tool guidance
 
 - Prefer the issue tracker's structured connector or API for reads and writes.
-- Use local repository inspection only after verifying that the checkout belongs to the parent issue, and only for evidence needed to produce a better decomposition.
+- Apply the checkout verification in section 1 and limit local inspection to evidence needed for decomposition.
 - Fall back to a CLI only when the connector lacks required child-linking or update capabilities.
 - Never expose tokens or authentication details.
 - Do not modify repository files unless the user separately asks for implementation work.

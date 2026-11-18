@@ -15,7 +15,7 @@ Turn incomplete issue context into an implementation-ready plan without discardi
 ## 1. Resolve the task
 
 - Identify the exact tracker, repository or project, and issue when supplied.
-- Verify that any local checkout belongs to the resolved task's repository before using it as evidence. Without an issue, resolve the destination from supplied context and the checkout; ask when ambiguous.
+- An issue can require changes in several repositories, including repositories outside the issue repository. Verify each checkout's repository identity and relevance to the task before using it as evidence. Without an issue, resolve the destination from supplied context and the checkout, and ask when ambiguous.
 - Read the complete issue body, comments, attachments, metadata, linked designs, and existing child links when available.
 - Treat the current conversation as planning evidence. Capture approved decisions, rejected options, constraints, and intentional placeholders.
 - Inspect repository context for discoverable facts instead of asking the user. Read project instructions before inspecting or proposing changes.
