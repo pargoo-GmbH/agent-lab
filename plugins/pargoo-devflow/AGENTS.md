@@ -29,3 +29,21 @@ Apply these rules when creating or modifying skills in `plugins/pargoo-devflow`.
 11. **Verification.** Run applicable skill validation, review the complete diff, and test affected scenarios. Clearly distinguish executed tests from unverified assumptions.
 
 **Orchestrator-specific rule:** `develop` coordinates skills and manages workflow state. Keep specialized behavior in the responsible skills; do not duplicate their internal logic in the orchestrator.
+
+## Behavioral Change Review
+
+**Baseline.** Before editing DevFlow skills, inspect the working tree for pre-existing changes, record the current Git commit SHA, and identify the skills relevant to the requested change. Distinguish pre-existing changes from changes made for the current task. If they cannot be reliably separated, disclose the limitation in the final report. Use that original SHA throughout the task, including after corrections, commits, and resumes. If the original SHA cannot be recovered, report the comparison gap.
+
+**Implementation.** Continue normal editing, corrections, and targeted verification as needed. After meaningful workflow changes, consider effects on related skills and existing guarantees. Investigate unintended or out-of-scope behavior changes and get user direction before adopting them.
+
+**Final review.** Automatically perform one consolidated review when implementation is ready for user review, before presenting it as ready for approval or PR publication. Run or refresh it whenever the user explicitly requests it. Compare the original revision with the final working tree, accounting for all relevant committed, staged, and unstaged changes and relevant new files. Analyze behavior across affected skills, including related skills whose files were untouched. Where relevant, cover workflow sequencing, transitions and recovery, skill responsibilities and delegation, authorization and safety, issue, branch and PR lifecycle, verification, independent review and reporting, and completion conditions and state preservation.
+
+Present a concise report with five sections, scaled to the size of the change.
+
+1. **Summary.** State what was implemented and which skills were affected.
+2. **Behavioral Changes.** For each material behavior, show **Before**, **After**, **Classification**, and **Evidence**. Prefer a compact table when multiple behaviors are involved. Classify findings as intended change, unintended change, preserved guarantee, or unverified behavior. Cite source locations for material conclusions. Support preserved guarantees with evidence that the behavior still holds in context, even when the relevant files are unchanged.
+3. **Potential Regressions.** Note unexpected changes, contradictions between skills, and risks needing correction or a user decision. If none were identified, say so without claiming exhaustive coverage.
+4. **Verification.** List checks and results, checks blocked or skipped, and evidence limits. Distinguish instruction-level consistency checks from actual runtime tests.
+5. **Final Assessment.** State whether the result matches the request, which behavior changes require explicit user approval, and what remains unresolved before acceptance. Clearly disclose behavior changes outside the explicit request.
+
+Present the final report before requesting publication approval. Keep existing verification, independent review, reporting, safety, and authorization requirements in force.
