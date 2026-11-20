@@ -32,18 +32,24 @@ Apply these rules when creating or modifying skills in `plugins/pargoo-devflow`.
 
 ## Behavioral Change Review
 
-**Baseline.** Before editing DevFlow skills, inspect the working tree for pre-existing changes, record the current Git commit SHA, and identify the skills relevant to the requested change. Distinguish pre-existing changes from changes made for the current task. If they cannot be reliably separated, disclose the limitation in the final report. Use that original SHA throughout the task, including after corrections, commits, and resumes. If the original SHA cannot be recovered, report the comparison gap.
+**Baseline.** Before editing DevFlow skills, inspect the working tree, record the starting Git commit SHA and relevant skills, and identify pre-existing changes. Keep that SHA as the baseline through corrections, commits, and resumes. If pre-existing changes cannot be separated from this task, or the baseline cannot be recovered, disclose the limitation.
 
-**Implementation.** Continue normal editing, corrections, and targeted verification as needed. After meaningful workflow changes, consider effects on related skills and existing guarantees. Investigate unintended or out-of-scope behavior changes and get user direction before adopting them.
+**Implementation.** Iterate, correct, and run targeted verification as needed. After meaningful workflow changes, assess effects on related skills and existing guarantees. Investigate unintended or out-of-scope changes and seek user direction before adopting them. Do not produce a full review after each edit.
 
-**Final review.** Automatically perform one consolidated review when implementation is ready for user review, before presenting it as ready for approval or PR publication. Run or refresh it whenever the user explicitly requests it. Compare the original revision with the final working tree, accounting for all relevant committed, staged, and unstaged changes and relevant new files. Analyze behavior across affected skills, including related skills whose files were untouched. Where relevant, cover workflow sequencing, transitions and recovery, skill responsibilities and delegation, authorization and safety, issue, branch and PR lifecycle, verification, independent review and reporting, and completion conditions and state preservation.
+**Final review.** Automatically produce one consolidated review when implementation is ready for user review, before presenting it as ready for approval or PR publication; run or refresh it on explicit user request. Compare the original baseline with the final working tree, including relevant committed, staged, unstaged, and new files. Analyze behavior across affected and related skills, including unchanged files. Where relevant, examine workflow sequencing, transitions, and recovery; skill ownership and delegation; authorization and safety; Issue, branch, and PR lifecycle; verification, independent review, and reporting; and completion conditions and state preservation.
 
-Present a concise report with five sections, scaled to the size of the change.
+Present a concise, plain-language report with five sections, scaled to the change:
 
-1. **Summary.** State what was implemented and which skills were affected.
-2. **Behavioral Changes.** For each material behavior, show **Before**, **After**, **Classification**, and **Evidence**. Prefer a compact table when multiple behaviors are involved. Classify findings as intended change, unintended change, preserved guarantee, or unverified behavior. Cite source locations for material conclusions. Support preserved guarantees with evidence that the behavior still holds in context, even when the relevant files are unchanged.
-3. **Potential Regressions.** Note unexpected changes, contradictions between skills, and risks needing correction or a user decision. If none were identified, say so without claiming exhaustive coverage.
-4. **Verification.** List checks and results, checks blocked or skipped, and evidence limits. Distinguish instruction-level consistency checks from actual runtime tests.
-5. **Final Assessment.** State whether the result matches the request, which behavior changes require explicit user approval, and what remains unresolved before acceptance. Clearly disclose behavior changes outside the explicit request.
+1. **Summary.** State the request, outcome, affected skills, changes outside the request, and pending decisions. If none were identified, write “No additional behavior changes identified”.
+2. **Behavioral Changes.** Group findings by the user's request, not the implementer's intent:
+   - **Requested changes:** Behavior added, modified, or removed to fulfill the request.
+   - **Additional changes — not requested:** Behavior added, modified, or removed outside the explicit request, including agent-initiated changes. Flag these for explicit user review.
+   - **Preserved guarantees:** Important related behavior still supported by contextual evidence, even in unchanged files.
 
-Present the final report before requesting publication approval. Keep existing verification, independent review, reporting, safety, and authorization requirements in force.
+   For each material finding, show **Before → After**, **Classification**, and **Evidence** separately. Use “Not present” for entirely new behavior. Classify findings as intended change, unintended change, preserved guarantee, or unverified behavior; keep uncertainties separate from preserved guarantees. Cite precise original and final source locations where relevant. Prefer compact comparisons with classification and evidence below, not wide tables.
+
+3. **Potential Regressions.** Report material risks, unexpected effects, cross-skill contradictions, and decisions needed. Distinguish confirmed findings from suspected or untested risks. If none were identified, say so without claiming exhaustive coverage.
+4. **Verification.** Report passed, failed, blocked, and unperformed checks and evidence limits. Distinguish instruction-level checks from runtime tests.
+5. **Final Assessment.** State whether the requested behavior appears implemented, what additional or other behavior changes need approval, remaining risks and verification gaps, and decisions needed before acceptance or publication.
+
+Keep existing verification, independent review, reporting, safety, and authorization requirements in force.
