@@ -9,7 +9,7 @@ Use this guide during read-only evidence gathering. Apply the findings through t
 
 ## Assess schema changes
 
-The levels below illustrate possible consequences. Classify the actual change using project evidence and the main skill's criteria.
+The table gives examples of possible risk levels and sets no upper limit. Base the final risk classification on the actual consequences, project evidence, and the main skill's existing criteria.
 
 | Schema change | Potential risk | Assessment guidance |
 | --- | --- | --- |
