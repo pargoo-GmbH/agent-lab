@@ -22,6 +22,14 @@ Use authorized read-only operations. Do not implement code, change configuration
 
 If essential evidence is missing, investigate what can reasonably be established through read-only inspection. If requirements or other essential prerequisites remain unresolved, return the specific missing prerequisite and dependent work to the caller without fabricating classifications or a final decision. The caller retains discovery/refinement and authorization. If the scope is defined but material execution risk remains unverifiable, account for that uncertainty in controllability and the decision rather than assuming safety.
 
+### Technology-specific assessment
+
+During evidence gathering, identify the technologies and services affected by the task. Read only the assessment guides relevant to the planned changes. Apply their guidance within the existing assessment criteria.
+
+Available references:
+
+- [Strapi Schema Assessment](references/strapi-schema-assessment.md) — read when the task requires or may require changes to Strapi content types, components, fields, relations, or other schema definitions.
+
 ## Classify three independent dimensions
 
 ### Complexity: Low / Medium / High
