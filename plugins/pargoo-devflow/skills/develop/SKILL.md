@@ -337,7 +337,25 @@ On every resume, reconcile the live PR set, including when waiting for a merge:
 
 ## Status Footer
 
-End every response with a compact GitHub-oriented footer. Keep the final answer self-contained.
+Before each completed response, including after a user interruption, pause, or
+delegated skill returns, reconcile the current workflow using available GitHub,
+Git, and conversation evidence. Preserve applicable decisions, authorizations,
+unresolved questions, outstanding operations, and Review Cycle state.
+
+Choose the next step and what it is awaiting from that reconciled state. Keep
+independent outstanding operations visible without presenting them as blockers
+to unrelated work. If a required value cannot be reliably recovered, say so;
+do not guess or silently reset review state. Use existing resume and
+authorization rules rather than repeating completed work or requesting
+confirmation already granted.
+
+Before sending the response, check the applicable footer template field by field:
+include every required field and applicable multi-repository or PR detail, and
+ensure its values, blockers, next step, and awaiting state agree with the
+reconciled state. Mark unrecoverable values as unknown where appropriate; follow
+the existing stop-or-clarify rules when they are required for a safe transition.
+End every response with the complete applicable footer below, using that same
+state. Keep the final answer self-contained.
 
 Before creation, use the standalone footer with `Issue: not created — <short task>` and `Branch/base: not assigned -> <discovered default branch or unresolved>`.
 
