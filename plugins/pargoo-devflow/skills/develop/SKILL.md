@@ -33,7 +33,7 @@ Read each direct dependency's `SKILL.md` completely immediately before using it,
 ## Core Rules
 
 1. Reconstruct before acting. Inspect available GitHub and Git state on every invocation or resume.
-2. Propose one concrete next phase and wait. A user confirmation authorizes only that clearly proposed phase, including the bounded review corrections below when the reporting transition is authorized.
+2. Resolve the information needed to choose the next phase before recommending it. Request at most one independent decision or missing fact per interaction. Propose one concrete next phase and wait for authorization if not already given. Accept unambiguous user-provided decisions and authorizations without redundant confirmation, subject to existing boundaries. A generic confirmation applies only to the request it answers and does not authorize another mentioned phase or operation. Authorization of the reporting transition includes the bounded review corrections below.
 3. Treat approval as transition authorization, not evidence that known failures pass.
 4. Never repeat completed planning or reporting work on a routine resume. A separately authorized new independent review run does not authorize duplicating a successful report for unchanged implementation.
 5. Never hardcode repository names, issue numbers, branch names, or a default branch.
@@ -303,7 +303,7 @@ Supply verified Issue references and closing intent to `creating-pull-requests`.
 
 ## Optional Remote Review Status
 
-After `creating-pull-requests` successfully creates a standalone, child, or final parent PR, offer to wait for the remote Pargoosh Code Review to complete within the default observation window defined by `track-code-review-status`. Wait for explicit user confirmation; PR creation authorization does not authorize monitoring.
+After `creating-pull-requests` successfully creates a standalone, child, or final parent PR, offer to wait for the remote Pargoosh Code Review within the default observation window defined by `track-code-review-status`, following Core Rule 2 and the multi-PR guidance below. Require explicit user confirmation before monitoring; PR creation authorization does not authorize it. Continue independent authorized work.
 
 Resolve `track-code-review-status` by name as an optional dependency, separate from the five mandatory dependencies. Once authorized, load and follow the `track-code-review-status` skill instructions, then delegate monitoring with an explicit request for waiting mode and the verified PR URL or repository and PR number, using that skill's default observation window. Use a one-time status check when the user explicitly requests it. Let that skill own checks, polling, timeouts, and result reporting; do not implement them or create cron jobs here. If the skill is unavailable or monitoring cannot complete, report the limitation without blocking the existing PR workflow. If the user declines, leave that PR awaiting manual review and merge.
 
@@ -392,7 +392,7 @@ Show terminal counts as history until a new run is authorized, then show that ru
 
 For multi-PR work, qualify the active branch/base by repository and summarize verified PRs, outstanding requirements, and any checklist synchronization blockers. Use the actual route for that repository.
 
-When another required deliverable can progress, show its next phase as the primary step in the workflow footer and offer remote review of the open PR as an optional action outside the footer. In that case, use the review-specific footer only when the user explicitly chooses monitoring or findings evaluation, or a review decision is pending. Return to the primary workflow footer when the optional action ends unless a review decision remains pending.
+When another required deliverable can progress, show its next phase as the primary step in the workflow footer and mention remote review of the open PR as an optional action outside the footer, without requesting its authorization alongside another decision. Do not interrupt authorized work to request it. In that case, use the review-specific footer only when the user explicitly chooses monitoring or findings evaluation, or a review decision is pending. Return to the primary workflow footer when the optional action ends unless a review decision remains pending.
 
 When using the review footer to offer remote monitoring, keep `Phase: Waiting for merge`, use `Next step: Wait for remote code review completion` and `Awaiting: User confirmation`, and preserve the local review fields. After monitoring returns, is declined, or is unavailable, return to manual review and merge if no other required deliverable can progress and no findings evaluation is being offered or is pending. An optional monitoring limitation alone does not block the workflow.
 
