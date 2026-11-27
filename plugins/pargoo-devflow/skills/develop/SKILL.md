@@ -1,6 +1,6 @@
 ---
 name: develop
-description: Coordinate a task description or GitHub issue through planning, implementation, verification, pull request, and manual merge by reconstructing state and delegating to existing skills. Use when a user asks to start, implement, continue, deliver, or move a task or issue toward a PR, even without an existing issue; when they ask what comes next in an issue workflow; or when work is split across a parent issue and subissues with integration branches. Use as the main entry point when the user invokes the pargoo DevFlow plugin for a development task. Also trigger on explicit `$develop` requests.
+description: Coordinate a task description or GitHub issue through planning, implementation, verification, pull request, and manual merge by reconstructing state and delegating to existing skills. Use when a user asks to start, implement, continue, deliver, or move a task or issue toward a PR, even without an existing issue; when they ask what comes next in an issue workflow; or when work is split across a parent issue and subissues with integration branches. When the user explicitly mentions the pargoo DevFlow plugin, prefer this skill as the entry point unless the request specifically calls for another skill. Also trigger on explicit `$develop` requests.
 metadata:
   author: "pargoo GmbH"
   website: "https://www.pargoo.com/"
